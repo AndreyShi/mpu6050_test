@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <wiringPi.h>
 #include <math.h>
+#include <tgmath.h>
 
 #define Device_Address 0x68	/*Device Address/Identifier for MPU6050*/
 
@@ -37,7 +38,7 @@ void MPU6050_Init(){
 	wiringPiI2CWriteReg8 (fd, SMPLRT_DIV, 0x07);	/* Write to sample rate register */
 	wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x01);	/* Write to power management register */
 	wiringPiI2CWriteReg8 (fd, CONFIG, 0);		/* Write to Configuration register */
-	wiringPiI2CWriteReg8 (fd, GYRO_CONFIG, 0x08);	/* Write to Gyro Configuration register */
+	wiringPiI2CWriteReg8 (fd, GYRO_CONFIG,0x08);	/* Write to Gyro Configuration register */
 	wiringPiI2CWriteReg8 (fd, INT_ENABLE, 0x01);	/*Write to interrupt enable register */
 
 	} 
@@ -78,8 +79,9 @@ int main(){
 
 	fd = wiringPiI2CSetup(Device_Address);   /*Initializes I2C with device Address*/
 	MPU6050_Init();		                 /* Initializes MPU6050 */
-	
-	while(1)
+        preInterval = millis(); // may cause lack of angular accuracy if begin() is much before the first update()
+
+	while(1)//for(int i = 0 ; i < 20; i++)
 	{
 		/*Read raw value of Accelerometer and gyroscope from MPU6050*/
 		Acc_x = read_raw_data(ACCEL_XOUT_H);
@@ -99,9 +101,8 @@ int main(){
 		gyroY = Gyro_y/65.5;
 		gyroZ = Gyro_z/65.5;
 		
-		printf("\n gyroX=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taccX=%.3f g\taccY=%.3f g\tAz=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
+		//printf("\n gyroX=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taccX=%.3f g\taccY=%.3f g\tAz=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
 
-        preInterval = millis(); // may cause lack of angular accuracy if begin() is much before the first update()
 
         float sgZ = accZ<0 ? -1 : 1; // allow one angle to go from -180 to +180 degrees
         angleAccX =   atan2(accY, sgZ*sqrt(accZ*accZ + accX*accX)) * RAD_2_DEG; // [-180,+180] deg
@@ -118,7 +119,7 @@ int main(){
         angleZ += gyroZ*dt; // not wrapped
 
 		printf("\n angleX=%.3f °\tangleY=%.3f °\tangleZ=%.3f",angleX,angleY,angleZ);
-		delay(500);
+		delay(10);
 		
 	}
 	return 0;
