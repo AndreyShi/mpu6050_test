@@ -81,7 +81,7 @@ int main(){
 	MPU6050_Init();		                 /* Initializes MPU6050 */
         preInterval = millis(); // may cause lack of angular accuracy if begin() is much before the first update()
 
-	while(1)//for(int i = 0 ; i < 20; i++)
+	for(int i = 0 ; i < 20; i++)
 	{
 		/*Read raw value of Accelerometer and gyroscope from MPU6050*/
 		Acc_x = read_raw_data(ACCEL_XOUT_H);
