@@ -101,7 +101,7 @@ int main(){
 		gyroY = Gyro_y/65.5;
 		gyroZ = Gyro_z/65.5;
 		
-		//printf("\n gyroX=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taccX=%.3f g\taccY=%.3f g\tAz=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
+		printf("\n gyroX=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taccX=%.3f g\taccY=%.3f g\tAz=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
 
 
         float sgZ = accZ<0 ? -1 : 1; // allow one angle to go from -180 to +180 degrees
