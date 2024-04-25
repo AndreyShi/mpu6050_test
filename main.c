@@ -62,7 +62,10 @@ static float wrap(float angle,float limit){
   while (angle < -limit) angle += 2*limit;
   return angle;
 }
-
+void SetConsolePos(int x,int y)
+{
+	printf("\33[%d;%dH", x ,y);
+}
 
 int main(){
 	
@@ -101,7 +104,7 @@ int main(){
 		gyroY = Gyro_y/65.5;
 		gyroZ = Gyro_z/65.5;
 		
-		printf("\n gyroX=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taccX=%.3f g\taccY=%.3f g\tAz=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
+		printf("\n Gx=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\taX=%.3f g\taY=%.3f g\taZ=%.3f g\n",gyroX,gyroY,gyroZ,accX,accY,accZ);
 
 
         float sgZ = accZ<0 ? -1 : 1; // allow one angle to go from -180 to +180 degrees
@@ -119,6 +122,7 @@ int main(){
         angleZ += gyroZ*dt; // not wrapped
 
 		printf("\n angleX=%.3f °\tangleY=%.3f °\tangleZ=%.3f",angleX,angleY,angleZ);
+		SetConsolePos(0,0);
 		delay(10);
 		
 	}
