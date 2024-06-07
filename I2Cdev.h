@@ -38,6 +38,27 @@ THE SOFTWARE.
 #include <math.h> // required for BMP180
 #include <stdlib.h> // required for MPU6060
 #include <string.h> // required for MPU6060
+#include <sys/time.h>
+using namespace std;
+
+class Arduino_Serial{
+    public:
+    void write(char ch);
+    void print(const char* s);
+    void println(const char* s = 0);
+    void println(char s);
+    void println(float dt,int sz);
+    void println(double dt,int sz);
+    void print(float dt,int sz);
+    void print(double dt,int sz = 0);
+    void print(int t);
+    void print(char t);
+};
+extern Arduino_Serial Serial;
+extern uint32_t ulHighFrequencyTimerTicks;
+uint32_t micros(void);
+void delayMicroseconds(int t);
+void delay(int n);
 
 
 #define set_I2C_pins  false  

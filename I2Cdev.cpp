@@ -259,3 +259,81 @@ bool I2Cdev::writeWords(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint16
   uint8_t response = bcm2835_i2c_write(sendBuf, 1+2*length);
   return response == BCM2835_I2C_REASON_OK ;
 }
+
+
+Arduino_Serial Serial;
+uint32_t ulHighFrequencyTimerTicks;
+
+void Arduino_Serial::write(char ch)
+{
+   printf("%c",ch);
+}
+
+void Arduino_Serial::print(const char* s)
+{
+   printf("%s",s);
+}
+
+void Arduino_Serial::println(const char* s)
+{
+    if(s == 0)
+    {printf("\n");}
+    else
+    {printf("%s\n",s);}
+}
+
+void Arduino_Serial::println(char s)
+{
+    printf("%c\n",s);
+}
+
+void Arduino_Serial::print(float dt,int sz)
+{
+    printf("%.5f",dt);
+}
+
+void Arduino_Serial::println(float dt,int sz)
+{
+    printf("%.3f\n",dt);
+}
+
+void Arduino_Serial::println(double dt,int sz)
+{
+    printf("%.3f\n",dt);
+}
+
+void Arduino_Serial::print(double dt,int sz)
+{
+    printf("%.3f",dt);
+}
+void Arduino_Serial::print(int t)
+{
+    printf("%d",t);
+}
+void Arduino_Serial::print(char t)
+{
+    printf("%c",t);
+}
+/*
+for arduino compability
+in uint32_t 4294 sec max.
+*/
+uint32_t micros(void)
+{
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+    return time_in_micros;
+}
+
+void delayMicroseconds(int t)
+{
+  bcm2835_delayMicroseconds(t);
+}
+/*
+for arduino compability
+*/
+void delay(int n)
+{
+  bcm2835_delay(n); 	
+}
