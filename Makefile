@@ -9,3 +9,10 @@ bcm:
 	make
 	sudo make check
 	sudo make install
+bcm175:
+	tar zxvf bcm2835-1.75.tar.gz
+	cd bcm2835-1.75
+	./configure
+	make
+	sudo make check
+	sudo make install
