@@ -41,6 +41,8 @@ THE SOFTWARE.
 #include <sys/time.h>
 using namespace std;
 
+#define I2CDEVLIB_WIRE_BUFFER_LENGTH 32
+
 class Arduino_Serial{
     public:
     void write(char ch);
