@@ -67,7 +67,7 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 int main(int argc, char **argv) {
   printf("MPU6050 3-axis acceleromter example program\n");
   I2Cdev::initialize();
-  MPU6050 accelgyro ;
+  MPU6050_Base accelgyro ;
   int16_t ax, ay, az;
   int16_t gx, gy, gz;
   if ( accelgyro.testConnection() ) 

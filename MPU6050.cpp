@@ -2740,6 +2740,42 @@ uint8_t MPU6050::getFIFOByte() {
     I2Cdev::readByte(devAddr, MPU6050_RA_FIFO_R_W, buffer);
     return buffer[0];
 }
+
+int8_t MPU6050::GetCurrentFIFOPacket(uint8_t *data, uint8_t length)
+{
+     int16_t fifoC;
+     // This section of code is for when we allowed more than 1 packet to be acquired
+     uint32_t BreakTimer = micros();
+     bool packetReceived = false;
+     do {
+         if ((fifoC = getFIFOCount())  > length) {
+
+             if (fifoC > 200) { // if you waited to get the FIFO buffer to > 200 bytes it will take longer to get the last packet in the FIFO Buffer than it will take to  reset the buffer and wait for the next to arrive
+                 resetFIFO(); // Fixes any overflow corruption
+                 fifoC = 0;
+                 while (!(fifoC = getFIFOCount()) && ((micros() - BreakTimer) <= (getFIFOTimeout()))); // Get Next New Packet
+                 } else { //We have more than 1 packet but less than 200 bytes of data in the FIFO Buffer
+                 uint8_t Trash[I2CDEVLIB_WIRE_BUFFER_LENGTH];
+                 while ((fifoC = getFIFOCount()) > length) {  // Test each time just in case the MPU is writing to the FIFO Buffer
+                     fifoC = fifoC - length; // Save the last packet
+                     uint16_t  RemoveBytes;
+                     while (fifoC) { // fifo count will reach zero so this is safe
+                         RemoveBytes = (fifoC < I2CDEVLIB_WIRE_BUFFER_LENGTH) ? fifoC : I2CDEVLIB_WIRE_BUFFER_LENGTH; // Buffer Length is different than the packet length this will efficiently clear the buffer
+                         getFIFOBytes(Trash, (uint8_t)RemoveBytes);
+                         fifoC -= RemoveBytes;
+                     }
+                 }
+             }
+         }
+         if (!fifoC) return 0; // Called too early no data or we timed out after FIFO Reset
+         // We have 1 packet
+         packetReceived = fifoC == length;
+         if (!packetReceived && (micros() - BreakTimer) > (getFIFOTimeout())) return 0;
+     } while (!packetReceived);
+     getFIFOBytes(data, length); //Get 1 packet
+     return 1;
+}
+
 void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
     if(length > 0){
         I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_R_W, length, data);
@@ -2753,6 +2789,16 @@ void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
  */
 void MPU6050::setFIFOByte(uint8_t data) {
     I2Cdev::writeByte(devAddr, MPU6050_RA_FIFO_R_W, data);
+}
+
+void MPU6050::setFIFOTimeout(uint32_t fifoTimeout)
+{
+this->fifoTimeout = fifoTimeout;
+}
+
+uint32_t MPU6050::getFIFOTimeout()
+{
+return fifoTimeout;
 }
 
 // WHO_AM_I register
