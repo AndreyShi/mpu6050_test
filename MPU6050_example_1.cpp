@@ -40,8 +40,8 @@ To compile on a Raspberry Pi (1 or 2)
 #include <stdio.h>
 #include <bcm2835.h>
 #include "I2Cdev.h"
-//#include "MPU6050.h"
-#include "MPU6050_6Axis_MotionApps20.h"
+#include "MPU6050.h"
+//#include "MPU6050_6Axis_MotionApps20.h"
 #include <math.h>
 
 // MPU control/status vars
@@ -67,7 +67,7 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 int main(int argc, char **argv) {
   printf("MPU6050 3-axis acceleromter example program\n");
   I2Cdev::initialize();
-  MPU6050_Base accelgyro ;
+  MPU6050 accelgyro ;
   int16_t ax, ay, az;
   int16_t gx, gy, gz;
   if ( accelgyro.testConnection() ) 
