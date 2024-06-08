@@ -60,7 +60,7 @@ extern Arduino_Serial Serial;
 extern uint32_t ulHighFrequencyTimerTicks;
 uint32_t micros(void);
 void delayMicroseconds(int t);
-void delay(int n);
+//void delay(int n);
 
 
 #define set_I2C_pins  false  

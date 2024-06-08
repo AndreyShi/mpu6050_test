@@ -333,7 +333,7 @@ void delayMicroseconds(int t)
 /*
 for arduino compability
 */
-void delay(int n)
-{
-  bcm2835_delay(n); 	
-}
+//void delay(int n)
+//{
+//  bcm2835_delay(n); 	
+//}
