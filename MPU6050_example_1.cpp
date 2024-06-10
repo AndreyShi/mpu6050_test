@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
         mpu.CalibrateAccel(6);//old 6
-        //mpu.CalibrateGyro(6);//old 6
+        mpu.CalibrateGyro(6);//old 6
         
         mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready

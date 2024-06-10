@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 #include "I2Cdev.h"
 #include "helper_3dmath.h"
-
+#include <cstdio>
 // supporting link:  http://forum.arduino.cc/index.php?&topic=143444.msg1079517#msg1079517
 // also: http://forum.arduino.cc/index.php?&topic=141571.msg1062899#msg1062899s
 
