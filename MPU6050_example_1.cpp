@@ -68,7 +68,6 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
   int16_t gx, gy, gz;
 // Input on RPi pin GPIO 15
 #define PIN RPI_GPIO_P1_15
-#define M_PI 3.14F
 
 int main(int argc, char **argv) {
     if (!bcm2835_init())
@@ -135,10 +134,10 @@ int main(int argc, char **argv) {
       continue;
     }
 
-   // if (bcm2835_gpio_lev(PIN) == 0) {
-   //   printf("mpuInterrupt is not ready!\n");
-   //   continue;
-   // }
+    if (bcm2835_gpio_lev(PIN) == 0) {
+      printf("mpuInterrupt is not ready!\n");
+      continue;
+    }
     printf("Int: %d  ",mpu.getMotionStatus());
 
     // read a packet from FIFO
