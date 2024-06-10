@@ -826,9 +826,12 @@ class MPU6050 {
         uint8_t getDMPConfig2();
         void setDMPConfig2(uint8_t config);
         uint32_t fifoTimeout = MPU6050_FIFO_DEFAULT_TIMEOUT;
+        int16_t * GetActiveOffsets();
+        void PrintActiveOffsets(); 
     private:
         uint8_t devAddr;
         uint8_t buffer[14];
+        int16_t offsets[6];
 };
 
 #endif /* _MPU6050_H_ */

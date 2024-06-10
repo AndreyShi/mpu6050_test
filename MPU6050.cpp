@@ -3257,3 +3257,28 @@ uint8_t MPU6050::getDMPConfig2() {
 void MPU6050::setDMPConfig2(uint8_t config) {
     I2Cdev::writeByte(devAddr, MPU6050_RA_DMP_CFG_2, config);
 }
+
+int16_t * MPU6050::GetActiveOffsets() {
+    uint8_t AOffsetRegister = (getDeviceID() < 0x38 )? MPU6050_RA_XA_OFFS_H:0x77;
+    if(AOffsetRegister == 0x06)	I2Cdev::readWords(devAddr, AOffsetRegister, 3, (uint16_t *)offsets);
+    else {
+        I2Cdev::readWords(devAddr, AOffsetRegister, 1, (uint16_t *)offsets);
+        I2Cdev::readWords(devAddr, AOffsetRegister+3, 1, (uint16_t *)(offsets+1));
+        I2Cdev::readWords(devAddr, AOffsetRegister+6, 1, (uint16_t *)(offsets+2));
+    }
+    I2Cdev::readWords(devAddr, 0x13, 3, (uint16_t *)(offsets+3));
+    return offsets;
+}
+
+void MPU6050::PrintActiveOffsets() {
+    GetActiveOffsets();
+	//	A_OFFSET_H_READ_A_OFFS(Data);
+    Serial.print((float)offsets[0], 5); Serial.print(",\t");
+    Serial.print((float)offsets[1], 5); Serial.print(",\t");
+    Serial.print((float)offsets[2], 5); Serial.print(",\t");
+	
+	//	XG_OFFSET_H_READ_OFFS_USR(Data);
+    Serial.print((float)offsets[3], 5); Serial.print(",\t");
+    Serial.print((float)offsets[4], 5); Serial.print(",\t");
+    Serial.print((float)offsets[5], 5); Serial.print("\n\n");
+}
