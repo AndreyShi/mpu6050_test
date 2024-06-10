@@ -63,7 +63,7 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
-  MPU6050 accelgyro ;
+  MPU6050_Base mpu ;
   int16_t ax, ay, az;
   int16_t gx, gy, gz;
 // Input on RPi pin GPIO 15
@@ -81,14 +81,14 @@ int main(int argc, char **argv) {
   I2Cdev::initialize();
 
   while(1){
-      bool tst = accelgyro.testConnection();
+      bool tst = mpu.testConnection();
       Serial.println(tst ? "MPU6050 connection successful" : "MPU6050 connection failed");
       if(tst == false)
           { bcm2835_delay(5000);}
       else
           { break;}
   }
-  accelgyro.initialize();
+  mpu.initialize();
 
   #ifndef DMP
   Serial.println(F("Initializing DMP..."));
@@ -168,29 +168,29 @@ int main(int argc, char **argv) {
   printf("Updating internal sensor offsets...\n");
   // -76	-2359	1688	0	0	0
   printf("%i \t %i \t %i \t %i \t %i \t %i\n", 
-	 accelgyro.getXAccelOffset(),
-	 accelgyro.getYAccelOffset(),
-	 accelgyro.getZAccelOffset(),
-	 accelgyro.getXGyroOffset(),
-	 accelgyro.getYGyroOffset(),
-	 accelgyro.getZGyroOffset());
-  accelgyro.setXGyroOffset(220);
-  accelgyro.setYGyroOffset(76);
-  accelgyro.setZGyroOffset(-85);
+	 mpu.getXAccelOffset(),
+	 mpu.getYAccelOffset(),
+	 mpu.getZAccelOffset(),
+	 mpu.getXGyroOffset(),
+	 mpu.getYGyroOffset(),
+	 mpu.getZGyroOffset());
+  mpu.setXGyroOffset(220);
+  mpu.setYGyroOffset(76);
+  mpu.setZGyroOffset(-85);
   printf("%i \t %i \t %i \t %i \t %i \t %i\n", 
-	 accelgyro.getXAccelOffset(),
-	 accelgyro.getYAccelOffset(),
-	 accelgyro.getZAccelOffset(),
-	 accelgyro.getXGyroOffset(),
-	 accelgyro.getYGyroOffset(),
-	 accelgyro.getZGyroOffset());
+	 mpu.getXAccelOffset(),
+	 mpu.getYAccelOffset(),
+	 mpu.getZAccelOffset(),
+	 mpu.getXGyroOffset(),
+	 mpu.getYGyroOffset(),
+	 mpu.getZGyroOffset());
    
   */
   
   //printf("\n");
   //printf("  ax \t ay \t az \t gx \t gy \t gz:\n");
   //while (true) {
-  //  accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  //  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
   //  printf("  %d \t %d \t %d \t %d \t %d \t %d\r", ax, ay, az, gx, gy, gz);
   //  fflush(stdout);
   //  bcm2835_delay(100);

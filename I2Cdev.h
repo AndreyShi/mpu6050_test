@@ -42,7 +42,7 @@ THE SOFTWARE.
 using namespace std;
 
 #define I2CDEVLIB_WIRE_BUFFER_LENGTH 32
-
+#define F(x) x
 class Arduino_Serial{
     public:
     void write(char ch);
