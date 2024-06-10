@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
   devStatus = mpu.dmpInitialize();
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
-        //mpu.CalibrateAccel(6);//old 6
+        mpu.CalibrateAccel(6);//old 6
         //mpu.CalibrateGyro(6);//old 6
         mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready
@@ -134,10 +134,10 @@ int main(int argc, char **argv) {
       continue;
     }
 
-    if (bcm2835_gpio_lev(PIN) == 0) {
-      printf("mpuInterrupt is not ready!\n");
-      continue;
-    }
+   // if (bcm2835_gpio_lev(PIN) == 0) {
+   //   printf("mpuInterrupt is not ready!\n");
+   //   continue;
+   // }
     printf("Int: %d  ",mpu.getMotionStatus());
 
     // read a packet from FIFO

@@ -828,6 +828,10 @@ class MPU6050 {
         uint32_t fifoTimeout = MPU6050_FIFO_DEFAULT_TIMEOUT;
         int16_t * GetActiveOffsets();
         void PrintActiveOffsets(); 
+
+        void CalibrateGyro(uint8_t Loops);
+        void CalibrateAccel(uint8_t Loops);
+        void PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops);
     private:
         uint8_t devAddr;
         uint8_t buffer[14];

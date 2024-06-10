@@ -3282,3 +3282,113 @@ void MPU6050::PrintActiveOffsets() {
     Serial.print((float)offsets[4], 5); Serial.print(",\t");
     Serial.print((float)offsets[5], 5); Serial.print("\n\n");
 }
+
+/* Replacement for Arduino map()
+ * @see https://www.arduino.cc/reference/en/language/functions/math/map/
+ */
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+//***************************************************************************************
+//**********************           Calibration Routines            **********************
+//***************************************************************************************
+/**
+  @brief      Fully calibrate Gyro from ZERO in about 6-7 Loops 600-700 readings
+*/
+void MPU6050::CalibrateGyro(uint8_t Loops ) {
+  double kP = 0.3;
+  double kI = 90;
+  float x;
+  x = (100 - map(Loops, 1, 5, 20, 0)) * .01;
+  kP *= x;
+  kI *= x;
+  
+  PID( MPU6050_RA_GYRO_XOUT_H,  kP, kI,  Loops);
+}
+
+/**
+  @brief      Fully calibrate Accel from ZERO in about 6-7 Loops 600-700 readings
+*/
+void MPU6050::CalibrateAccel(uint8_t Loops ) {
+
+	float kP = 0.3;
+	float kI = 20;
+	float x;
+	x = (100 - map(Loops, 1, 5, 20, 0)) * .01;
+	kP *= x;
+	kI *= x;
+	PID( MPU6050_RA_ACCEL_XOUT_H, kP, kI,  Loops);
+}
+uint16_t  Data_test[3];
+uint16_t  Data_test_bias[3];
+void MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops){
+	uint8_t SaveAddress = (ReadAddress == MPU6050_RA_ACCEL_XOUT_H)?((getDeviceID() < 0x38 )? MPU6050_RA_XA_OFFS_H:0x77):MPU6050_RA_XG_OFFS_USRH;
+
+	int16_t  Data;
+	float Reading;
+	int16_t BitZero[3];
+	uint8_t shift =(SaveAddress == 0x77)?3:2;
+	float Error, PTerm, ITerm[3];
+	int16_t eSample;
+	uint32_t eSum;
+	uint16_t gravity = 8192; // prevent uninitialized compiler warning
+	if (ReadAddress == MPU6050_RA_ACCEL_XOUT_H) gravity = 16384 >> getFullScaleAccelRange();
+    printf("readaddres: %d  saveaddres: %d  gravity: %d \n",ReadAddress, SaveAddress,gravity);
+	Serial.write('>');
+	for (int i = 0; i < 3; i++) {
+		I2Cdev::readWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data); // reads 1 or more 16 bit integers (Word)
+		Reading = Data;
+		if(SaveAddress != MPU6050_RA_XG_OFFS_USRH){
+			BitZero[i] = Data & 1;										 // Capture Bit Zero to properly handle Accelerometer calibration
+			ITerm[i] = ((float)Reading) * 8;
+			} else {
+			ITerm[i] = Reading * 4;
+		}
+	}
+	for (int L = 0; L < Loops; L++) {
+		eSample = 0;
+		for (int c = 0; c < 100; c++) {// 100 PI Calculations
+			eSum = 0;
+			for (int i = 0; i < 3; i++) { // X Y Z
+				I2Cdev::readWords(devAddr, ReadAddress + (i * 2), 1, (uint16_t *)&Data); // reads 1 or more 16 bit integers (Word)
+                Data_test[i] = Data;
+				Reading = Data;
+				if ((ReadAddress == MPU6050_RA_ACCEL_XOUT_H)&&(i == 2)) Reading -= gravity;	//remove Gravity
+				Error = -Reading;
+				eSum += abs(Reading);
+				PTerm = kP * Error;
+				ITerm[i] += (Error * 0.001) * kI;				// Integral term 1000 Calculations a second = 0.001
+				if(SaveAddress != MPU6050_RA_XG_OFFS_USRH){
+					Data = round((PTerm + ITerm[i] ) / 8);		//Compute PID Output
+					Data = ((Data)&0xFFFE) |BitZero[i];			// Insert Bit0 Saved at beginning
+				} else Data = round((PTerm + ITerm[i] ) / 4);	//Compute PID Output
+                Data_test_bias[i] = Data;
+				I2Cdev::writeWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data);
+			}
+
+			if((c == 99) && eSum > 1000){						// Error is still to great to continue 
+				c = 0;
+				Serial.write('*');
+                //printf("* %ld ",eSum); // посмотреть как меняется eSum
+                //kP *= 1.25; // попробовать увеличить 
+                //kI *= 1.25;
+			}
+			if((eSum * ((ReadAddress == MPU6050_RA_ACCEL_XOUT_H)?.05: 1)) < 5) eSample++;	// Successfully found offsets prepare to  advance
+			if((eSum < 100) && (c > 10) && (eSample >= 10)) break;		// Advance to next Loop
+			delay(1);
+		}
+		Serial.write('.');
+		kP *= .75;
+		kI *= .75;
+		for (int i = 0; i < 3; i++){
+			if(SaveAddress != MPU6050_RA_XG_OFFS_USRH) {
+				Data = round((ITerm[i] ) / 8);		//Compute PID Output
+				Data = ((Data)&0xFFFE) |BitZero[i];	// Insert Bit0 Saved at beginning
+			} else Data = round((ITerm[i]) / 4);
+			I2Cdev::writeWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data);
+		}
+	}
+	resetFIFO();
+	resetDMP();
+}
