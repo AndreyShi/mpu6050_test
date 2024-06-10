@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
         Serial.println(F(")"));
     }
   #endif
-      #ifdef DMP
+
     while(1){
     mpu.resetFIFO();
     mpu.resetDMP();
