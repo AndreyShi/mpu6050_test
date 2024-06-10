@@ -40,8 +40,8 @@ To compile on a Raspberry Pi (1 or 2)
 #include <stdio.h>
 #include <bcm2835.h>
 #include "I2Cdev.h"
-#include "MPU6050.h"
-//#include "MPU6050_6Axis_MotionApps20.h"
+//#include "MPU6050.h"
+#include "MPU6050_6Axis_MotionApps20.h"
 #include <math.h>
 
 // MPU control/status vars
@@ -66,18 +66,103 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
   MPU6050 accelgyro ;
   int16_t ax, ay, az;
   int16_t gx, gy, gz;
+// Input on RPi pin GPIO 15
+#define PIN RPI_GPIO_P1_15
+#define M_PI 3.14F
 
 int main(int argc, char **argv) {
+    if (!bcm2835_init())
+        return 1; 
+    // Set RPI pin P1-15 to be an input
+    bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_INPT);
+    //  with a pullup
+    bcm2835_gpio_set_pud(PIN, BCM2835_GPIO_PUD_DOWN);
   printf("MPU6050 3-axis acceleromter example program\n");
   I2Cdev::initialize();
 
-  if ( accelgyro.testConnection() ) 
-    printf("MPU6050 connection test successful\n") ;
-  else {
-    fprintf( stderr, "MPU6050 connection test failed! something maybe wrong, continuing anyway though ...\n");
-    //return 1;
+  while(1){
+      bool tst = accelgyro.testConnection();
+      Serial.println(tst ? "MPU6050 connection successful" : "MPU6050 connection failed");
+      if(tst == false)
+          { bcm2835_delay(5000);}
+      else
+          { break;}
   }
   accelgyro.initialize();
+
+  #ifndef DMP
+  Serial.println(F("Initializing DMP..."));
+  devStatus = mpu.dmpInitialize();
+  if (devStatus == 0) {
+        // Calibration Time: generate offsets and calibrate our MPU6050
+        //mpu.CalibrateAccel(6);//old 6
+        //mpu.CalibrateGyro(6);//old 6
+        mpu.PrintActiveOffsets();
+        // turn on the DMP, now that it's ready
+        Serial.println(F("Enabling DMP..."));
+        mpu.setDMPEnabled(true);
+
+        // enable Arduino interrupt detection
+        Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
+        //Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));// we set it on hal drivers
+        Serial.println(F(")..."));
+        //attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);// we set it on hal drivers
+        mpuIntStatus = mpu.getIntStatus();
+
+        // set our DMP Ready flag so the main loop() function knows it's okay to use it
+        Serial.println(F("DMP ready! Waiting for first interrupt..."));
+        dmpReady = true;
+
+        // get expected DMP packet size for later comparison
+        packetSize = mpu.dmpGetFIFOPacketSize();
+    } else {
+        // ERROR!
+        // 1 = initial memory load failed
+        // 2 = DMP configuration updates failed
+        // (if it's going to break, usually the code will be 1)
+        Serial.print(F("DMP Initialization failed (code "));
+        Serial.print(devStatus);
+        Serial.println(F(")"));
+    }
+  #endif
+      #ifdef DMP
+    while(1){
+    mpu.resetFIFO();
+    mpu.resetDMP();
+    bcm2835_delay(100);
+    if (!dmpReady) {
+      printf("dmp is not ready!\n");
+      continue;
+    }
+
+    if (bcm2835_gpio_lev(PIN) == 0) {
+      printf("mpuInterrupt is not ready!\n");
+      continue;
+    }
+    printf("Int: %d  ",mpu.getMotionStatus());
+
+    // read a packet from FIFO
+    if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) 
+    //mpu.getFIFOBytes(fifoBuffer, packetSize);
+    { // Get the Latest packet 
+            mpu.dmpGetQuaternion(&q, fifoBuffer);
+            mpu.dmpGetGravity(&gravity, &q);
+            mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+            //mpu.dmpGetAccel(&ax, fifoBuffer);
+            //mpu.dmpGetGyro(&gx, fifoBuffer);
+            //printf("%2ld:%2ld:%3ld  ", timer1m,timer1s,timer1ms);
+            Serial.print("ypr\t");
+            //printf("  delta  %.3f  ",delta);
+            Serial.print(ypr[0] * 180/M_PI);
+            Serial.print("\t");
+            Serial.print(ypr[1] * 180/M_PI);
+            Serial.print("\t");
+            Serial.println(ypr[2] * 180/M_PI,1);
+            //printf("   %d %d %d %d %d %d\n",ax, ay, az, gx, gy, gz);
+    }
+    else
+        { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
+  }
   // use the code below to change accel/gyro offset values
   /*
   printf("Updating internal sensor offsets...\n");
@@ -99,15 +184,16 @@ int main(int argc, char **argv) {
 	 accelgyro.getXGyroOffset(),
 	 accelgyro.getYGyroOffset(),
 	 accelgyro.getZGyroOffset());
+   
   */
   
-  printf("\n");
-  printf("  ax \t ay \t az \t gx \t gy \t gz:\n");
-  while (true) {
-    accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-    printf("  %d \t %d \t %d \t %d \t %d \t %d\r", ax, ay, az, gx, gy, gz);
-    fflush(stdout);
-    bcm2835_delay(100);
-  }
+  //printf("\n");
+  //printf("  ax \t ay \t az \t gx \t gy \t gz:\n");
+  //while (true) {
+  //  accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  //  printf("  %d \t %d \t %d \t %d \t %d \t %d\r", ax, ay, az, gx, gy, gz);
+  //  fflush(stdout);
+  //  bcm2835_delay(100);
+  //}
   return 1; 
 }
