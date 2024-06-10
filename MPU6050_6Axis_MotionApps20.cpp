@@ -49,9 +49,9 @@ THE SOFTWARE.
         #define __PGMSPACE_H_ 1
         #include <inttypes.h>
 
-        #define PROGMEM
+        //#define PROGMEM
         #define PGM_P  const char *
-        #define PSTR(str) (str)
+        //#define PSTR(str) (str)
         #define F(x) x
 
         typedef void prog_void;
@@ -68,10 +68,10 @@ THE SOFTWARE.
         #define strcat_P(dest, src) strcat((dest), (src))
         #define strcmp_P(a, b) strcmp((a), (b))
         
-        #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-        #define pgm_read_word(addr) (*(const unsigned short *)(addr))
+        //#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+        //#define pgm_read_word(addr) (*(const unsigned short *)(addr))
         #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
-        #define pgm_read_float(addr) (*(const float *)(addr))
+        //#define pgm_read_float(addr) (*(const float *)(addr))
         
         #define pgm_read_byte_near(addr) pgm_read_byte(addr)
         #define pgm_read_word_near(addr) pgm_read_word(addr)
