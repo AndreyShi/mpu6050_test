@@ -182,8 +182,8 @@ int main(int argc, char **argv) {
             Serial.println(ypr[2] * 180/M_PI,1);
             //printf("   %d %d %d %d %d %d\n",ax, ay, az, gx, gy, gz);
     }
-    else
-        { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
+    //else
+    //    { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
     }
   }
   // use the code below to change accel/gyro offset values
