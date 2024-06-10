@@ -135,10 +135,10 @@ int main(int argc, char **argv) {
       continue;
     }
 
-    if (bcm2835_gpio_lev(PIN) == 0) {
-      printf("mpuInterrupt is not ready!\n");
-      continue;
-    }
+   // if (bcm2835_gpio_lev(PIN) == 0) {
+   //   printf("mpuInterrupt is not ready!\n");
+   //   continue;
+   // }
     printf("Int: %d  ",mpu.getMotionStatus());
 
     // read a packet from FIFO
