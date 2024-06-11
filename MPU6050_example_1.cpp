@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
 
   #ifndef DMP
   Serial.println(F("Initializing DMP..."));
+  resetDMP:
   devStatus = mpu.dmpInitialize();
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
@@ -159,7 +160,8 @@ int main(int argc, char **argv) {
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
 
     // read a packet from FIFO
-    mpu.getFIFOBytes(fifoBuffer, packetSize);
+    if(mpu.getFIFOBytes(fifoBuffer, packetSize) == 0)
+    {continue;}
 
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
@@ -185,6 +187,8 @@ int main(int argc, char **argv) {
     //else
     //    { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
     }
+    else
+        { goto resetDMP;}
   }
   // use the code below to change accel/gyro offset values
   /*

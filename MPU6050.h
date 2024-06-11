@@ -719,7 +719,7 @@ class MPU6050 {
         uint8_t getFIFOByte();
         int8_t GetCurrentFIFOPacket(uint8_t *data, uint8_t length);
         void setFIFOByte(uint8_t data);
-        void getFIFOBytes(uint8_t *data, uint8_t length);
+        int8_t getFIFOBytes(uint8_t *data, uint8_t length);
         void setFIFOTimeout(uint32_t fifoTimeout);
         uint32_t getFIFOTimeout();
 

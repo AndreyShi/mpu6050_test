@@ -2776,12 +2776,14 @@ int8_t MPU6050::GetCurrentFIFOPacket(uint8_t *data, uint8_t length)
      return 1;
 }
 
-void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
+int8_t MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
+    int8_t res = 0;
     if(length > 0){
-        I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_R_W, length, data);
+        res = I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_R_W, length, data);
     } else {
     	*data = 0;
     }
+    return res;
 }
 /** Write byte to FIFO buffer.
  * @see getFIFOByte()
