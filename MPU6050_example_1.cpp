@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
   #ifndef DMP
   Serial.println(F("Initializing DMP..."));
-  resetDMP:
+ //resetDMP:
   devStatus = mpu.dmpInitialize();
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
@@ -129,8 +129,10 @@ int main(int argc, char **argv) {
 
     while(1){
     mpu.resetFIFO();
-    mpu.resetDMP();
-    bcm2835_delay(100);
+   // mpu.resetDMP();
+resetDMP:
+    bcm2835_delay(10);
+   // mpu.resetFIFO();
     if (!dmpReady) {
       printf("dmp is not ready!\n");
       continue;
