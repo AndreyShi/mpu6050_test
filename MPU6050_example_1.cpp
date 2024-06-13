@@ -155,20 +155,18 @@ int main(int argc, char **argv) {
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
   } else if (mpuIntStatus & 0x02) {
     // wait for correct available data length, should be a VERY short wait
-    bool donabor = false;
-    while (fifoCount < packetSize || fifoCount % packetSize) 
+    if(fifoCount < packetSize || fifoCount % packetSize) 
     {
-      fifoCount = mpu.getFIFOCount();
-      if(fifoCount == 1024)
-          { mpu.resetFIFO();}
-      donabor = true;
+       printf("bad packet, reset FIFO...!\n");
+       continue;
     }
     // read a packet from FIFO
     if(mpu.getFIFOBytes(fifoBuffer, packetSize) == 0)
-    {continue;}
+    {
+      printf("read fifo problem..!\n");
+      continue;
+    }
 
-    if(donabor)
-        { printf("->%d  ",fifoCount);}
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
     fifoCount -= packetSize;
