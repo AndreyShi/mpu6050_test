@@ -65,7 +65,7 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
   MPU6050_Base mpu ;
   int16_t ax, ay, az;
-  int16_t gx, gy, gz;
+  int32_t gx, gy, gz;
 // Input on RPi pin GPIO 15
 #define PIN RPI_GPIO_P1_15
 
@@ -127,80 +127,67 @@ int main(int argc, char **argv) {
   #endif
 
     while(1){
-    mpu.resetFIFO();
-    bcm2835_delay(100);
+        mpu.resetFIFO();
+        bcm2835_delay(100);
 
-    if (!dmpReady) {
-      printf("dmp is not ready!\n");
-      continue;
-    }
-
-   // if (bcm2835_gpio_lev(PIN) == 0) {
-   //   printf("mpuInterrupt is not ready!\n");
-   //   continue;
-   // }
-    // read a packet from FIFO
-      mpuIntStatus = mpu.getIntStatus();
+        if (!dmpReady) {
+            printf("dmp is not ready!\n");
+            continue;
+        }
+        // read a packet from FIFO
+        mpuIntStatus = mpu.getIntStatus();
         // get current FIFO count
-      fifoCount = mpu.getFIFOCount();
+        fifoCount = mpu.getFIFOCount();
 
-  printf("Int: %d  Cnt:%d  ",mpuIntStatus, fifoCount);
+        printf("Int: %d  Cnt:%d  ",mpuIntStatus, fifoCount);
 
-  // check for overflow (this should never happen unless our code is too inefficient)
-  if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
-    // reset so we can continue cleanly
-    mpu.resetFIFO();
-    Serial.println(F("FIFO overflow!"));
+        // check for overflow (this should never happen unless our code is too inefficient)
+        if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+          // reset so we can continue cleanly
+          mpu.resetFIFO();
+          Serial.println(F("FIFO overflow!"));
 
-    // otherwise, check for DMP data ready interrupt (this should happen frequently)
-  } else if (mpuIntStatus & 0x02) {
-    // wait for correct available data length, should be a VERY short wait
-    if(fifoCount < packetSize || fifoCount % packetSize) 
-    {
-       printf("bad packet, reset FIFO...!\n");
-       continue;
-    }
-    // read a packet from FIFO
-    if(mpu.getFIFOBytes(fifoBuffer, packetSize) == 0)
-    {
-      printf("read fifo problem..!\n");
-      continue;
-    }
+          // otherwise, check for DMP data ready interrupt (this should happen frequently)
+        } else if (mpuIntStatus & 0x02) {
+          // wait for correct available data length, should be a VERY short wait
+          if(fifoCount < packetSize || fifoCount % packetSize) 
+          {
+            printf("bad packet, reset FIFO...!\n");
+            continue;
+          }
+          // read a packet from FIFO
+          if(mpu.getFIFOBytes(fifoBuffer, packetSize) == 0)
+          {
+            printf("read fifo problem..!\n");
+            continue;
+          }
 
-    // track FIFO count here in case there is > 1 packet available
-    // (this lets us immediately read more without waiting for an interrupt)
-    fifoCount -= packetSize;
-    //if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) 
-    //mpu.getFIFOBytes(fifoBuffer, packetSize);
-    { // Get the Latest packet 
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            //mpu.dmpGetAccel(&ax, fifoBuffer);
-            //mpu.dmpGetGyro(&gx, fifoBuffer);
-            //printf("%2ld:%2ld:%3ld  ", timer1m,timer1s,timer1ms);
-            Serial.print("ypr\t");
-            //printf("  delta  %.3f  ",delta);
-            Serial.print(ypr[0] * 180/M_PI);
-            Serial.print("\t");
-            Serial.print(ypr[1] * 180/M_PI);
-            Serial.print("\t");
-            Serial.println(ypr[2] * 180/M_PI,1);
-            //printf("   %d %d %d %d %d %d\n",ax, ay, az, gx, gy, gz);
-    }
-    //else
-    //    { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
-    }
-    else if(mpuIntStatus == 1 && fifoCount == 0)
-    {
-       printf("resetting DMP...\n");
-       mpu.resetDMP();
-       mpu.setDMPEnabled(false);
-       delay(50);
-       mpu.setDMPEnabled(true);
-    }
-    else
-        { ;}
+          fifoCount -= packetSize;
+          mpu.dmpGetQuaternion(&q, fifoBuffer);
+          mpu.dmpGetGravity(&gravity, &q);
+          mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+          //printf("%2ld:%2ld:%3ld  ", timer1m,timer1s,timer1ms);
+          Serial.print("ypr\t");
+          Serial.print(ypr[0] * 180/M_PI);
+          Serial.print("\t");
+          Serial.print(ypr[1] * 180/M_PI);
+          Serial.print("\t");
+          Serial.println(ypr[2] * 180/M_PI,1);
+
+          //mpu.dmpGetAccel(&aa, fifoBuffer);//for linear
+          //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);//for linear
+          // todo view LinearAccel on display
+
+          //mpu.dmpGetGyro(&gx, fifoBuffer);//for uglova9 speed
+          //todo view uglova9 speed on display  
+        } else if (mpuIntStatus == 1 && fifoCount == 0) {
+            printf("resetting DMP...\n");
+            mpu.resetDMP();
+            mpu.setDMPEnabled(false);
+            delay(50);
+            mpu.setDMPEnabled(true);
+        } else
+              { ;}
   }
   return 1; 
 }
