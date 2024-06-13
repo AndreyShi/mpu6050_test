@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     mpu.resetFIFO();
    // mpu.resetDMP();
 resetDMP:
-    bcm2835_delay(10);
+    bcm2835_delay(100);
    // mpu.resetFIFO();
     if (!dmpReady) {
       printf("dmp is not ready!\n");
@@ -187,6 +187,14 @@ resetDMP:
     }
     //else
     //    { printf("mpu.dmpGetCurrentFIFOPacket false\n");}
+    }
+    else if(mpuIntStatus == 1 && fifoCount == 0)
+    {
+       printf("resetting DMP...\n");
+       mpu.resetDMP();
+       mpu.setDMPEnabled(false);
+       delay(50);
+       mpu.setDMPEnabled(true);
     }
     else
         { goto resetDMP;}
