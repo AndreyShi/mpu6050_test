@@ -91,7 +91,6 @@ int main(int argc, char **argv) {
 
   #ifndef DMP
   Serial.println(F("Initializing DMP..."));
- //resetDMP:
   devStatus = mpu.dmpInitialize();
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
@@ -129,10 +128,8 @@ int main(int argc, char **argv) {
 
     while(1){
     mpu.resetFIFO();
-   // mpu.resetDMP();
-resetDMP:
     bcm2835_delay(100);
-   // mpu.resetFIFO();
+
     if (!dmpReady) {
       printf("dmp is not ready!\n");
       continue;
@@ -158,12 +155,20 @@ resetDMP:
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
   } else if (mpuIntStatus & 0x02) {
     // wait for correct available data length, should be a VERY short wait
-    while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
-
+    bool donabor = false;
+    while (fifoCount < packetSize || fifoCount % packetSize) 
+    {
+      fifoCount = mpu.getFIFOCount();
+      if(fifoCount == 1024)
+          { mpu.resetFIFO();}
+      donabor = true;
+    }
     // read a packet from FIFO
     if(mpu.getFIFOBytes(fifoBuffer, packetSize) == 0)
     {continue;}
 
+    if(donabor)
+        { printf("->%d  ",fifoCount);}
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
     fifoCount -= packetSize;
@@ -197,39 +202,7 @@ resetDMP:
        mpu.setDMPEnabled(true);
     }
     else
-        { goto resetDMP;}
+        { ;}
   }
-  // use the code below to change accel/gyro offset values
-  /*
-  printf("Updating internal sensor offsets...\n");
-  // -76	-2359	1688	0	0	0
-  printf("%i \t %i \t %i \t %i \t %i \t %i\n", 
-	 mpu.getXAccelOffset(),
-	 mpu.getYAccelOffset(),
-	 mpu.getZAccelOffset(),
-	 mpu.getXGyroOffset(),
-	 mpu.getYGyroOffset(),
-	 mpu.getZGyroOffset());
-  mpu.setXGyroOffset(220);
-  mpu.setYGyroOffset(76);
-  mpu.setZGyroOffset(-85);
-  printf("%i \t %i \t %i \t %i \t %i \t %i\n", 
-	 mpu.getXAccelOffset(),
-	 mpu.getYAccelOffset(),
-	 mpu.getZAccelOffset(),
-	 mpu.getXGyroOffset(),
-	 mpu.getYGyroOffset(),
-	 mpu.getZGyroOffset());
-   
-  */
-  
-  //printf("\n");
-  //printf("  ax \t ay \t az \t gx \t gy \t gz:\n");
-  //while (true) {
-  //  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-  //  printf("  %d \t %d \t %d \t %d \t %d \t %d\r", ax, ay, az, gx, gy, gz);
-  //  fflush(stdout);
-  //  bcm2835_delay(100);
-  //}
   return 1; 
 }
