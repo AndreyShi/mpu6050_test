@@ -140,13 +140,12 @@ int main(int argc, char **argv) {
    //   printf("mpuInterrupt is not ready!\n");
    //   continue;
    // }
-    printf("Int: %d  ",mpu.getMotionStatus());
-
     // read a packet from FIFO
       mpuIntStatus = mpu.getIntStatus();
+        // get current FIFO count
+      fifoCount = mpu.getFIFOCount();
 
-  // get current FIFO count
-  fifoCount = mpu.getFIFOCount();
+  printf("Int: %d  Cnt:%d  ",mpuIntStatus, fifoCount);
 
   // check for overflow (this should never happen unless our code is too inefficient)
   if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
