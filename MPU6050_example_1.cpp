@@ -65,7 +65,7 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
   MPU6050_Base mpu ;
   int16_t ax, ay, az;
-  int32_t gxyz[3];//, gy, gz;
+  int16_t gxyz[3];//, gy, gz;
 // Input on RPi pin GPIO 15
 #define PIN RPI_GPIO_P1_15
 
