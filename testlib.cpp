@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
  
    pthread_create(&thread, NULL, threadFunc, thread_data);
    while(1){
-        delay(500);
+        delay(100);
         printf("main thread: %.3f %.3f %.3f\n",get_yarn(),get_pitch(),get_roll());
    }
    pthread_join(thread, NULL);

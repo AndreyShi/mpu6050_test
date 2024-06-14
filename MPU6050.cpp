@@ -3336,7 +3336,7 @@ void MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops){
 	uint32_t eSum;
 	uint16_t gravity = 8192; // prevent uninitialized compiler warning
 	if (ReadAddress == MPU6050_RA_ACCEL_XOUT_H) gravity = 16384 >> getFullScaleAccelRange();
-    printf("readaddres: %d  saveaddres: %d  gravity: %d \n",ReadAddress, SaveAddress,gravity);
+    //printf("readaddres: %d  saveaddres: %d  gravity: %d \n",ReadAddress, SaveAddress,gravity);
 	Serial.write('>');
 	for (int i = 0; i < 3; i++) {
 		I2Cdev::readWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data); // reads 1 or more 16 bit integers (Word)
