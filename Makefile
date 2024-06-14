@@ -20,6 +20,6 @@ myprog:
 	g++ -g MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m -o MPU6050_example_1
 mylib:
 	g++ -c MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m 
-	ar r libmy1.a *.o
+	ar r libMPU6050.a *.o
 myproglib:
-	g++ main2.cpp -L./ -lmy1 -l bcm2835 -l m -o main2
+	g++ testlib.cpp -pthread -L./ -lMPU6050 -l bcm2835 -l m -o testlib

@@ -10,4 +10,4 @@ float get_GyroX(void);
 float get_GyroY(void);
 float get_GyroZ(void);
 
-int main_MPU(void);
+int init_MPU(void);

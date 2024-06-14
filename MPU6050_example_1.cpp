@@ -92,7 +92,7 @@ float get_GyroZ(void)
 {return (float)gxyz[2]/16.4;}
 
 //int main(int argc, char **argv) {
-int main_MPU(void) {
+int init_MPU(void) {
     if (!bcm2835_init())
         return 1; 
     // Set RPI pin P1-15 to be an input
