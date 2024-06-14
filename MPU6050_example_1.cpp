@@ -43,6 +43,7 @@ To compile on a Raspberry Pi (1 or 2)
 //#include "MPU6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #include <math.h>
+#include "MPU6050lib.h"
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -69,7 +70,29 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 // Input on RPi pin GPIO 15
 #define PIN RPI_GPIO_P1_15
 
-int main(int argc, char **argv) {
+float get_yarn(void)
+{return ypr[0] * 180/M_PI;}
+float get_pitch(void)
+{return ypr[1] * 180/M_PI;}
+float get_roll(void)
+{return ypr[2] * 180/M_PI;}
+
+float get_AccX(void)
+{return (float)aaReal.x/16384.0;}
+float get_AccY(void)
+{return (float)aaReal.y/16384.0;}
+float get_AccZ(void)
+{return (float)aaReal.z/16384.0;}
+
+float get_GyroX(void)
+{return (float)gxyz[0]/16.4;}
+float get_GyroY(void);
+{return (float)gxyz[1]/16.4;}
+float get_GyroZ(void);
+{return (float)gxyz[2]/16.4;}
+
+//int main(int argc, char **argv) {
+int main_MPU(void) {
     if (!bcm2835_init())
         return 1; 
     // Set RPI pin P1-15 to be an input
