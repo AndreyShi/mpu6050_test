@@ -86,9 +86,9 @@ float get_AccZ(void)
 
 float get_GyroX(void)
 {return (float)gxyz[0]/16.4;}
-float get_GyroY(void);
+float get_GyroY(void)
 {return (float)gxyz[1]/16.4;}
-float get_GyroZ(void);
+float get_GyroZ(void)
 {return (float)gxyz[2]/16.4;}
 
 //int main(int argc, char **argv) {
