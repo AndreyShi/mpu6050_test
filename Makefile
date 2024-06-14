@@ -12,7 +12,7 @@ bcm:
 unzipbcm175:
 	tar zxvf bcm2835-1.75.tar.gz
 install_bcm175:
-	cd bcm2835-1.75/bcm2835-1.75
+	cd bcm2835-1.75
 	./configure
 	make
 	sudo make check

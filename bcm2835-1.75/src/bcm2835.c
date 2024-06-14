@@ -1573,8 +1573,6 @@ uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint
     uint32_t remaining = cmds_len;
     uint32_t i = 0;
     uint8_t reason = BCM2835_I2C_REASON_OK;
-    unsigned long Failsafe = cmds_len * 10000;
-    int           Timeout = 0;
     
     /* Clear FIFO */
     bcm2835_peri_set_bits(control, BCM2835_BSC_C_CLEAR_1 , BCM2835_BSC_C_CLEAR_1 );
@@ -1615,32 +1613,20 @@ uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint
     bcm2835_delayMicroseconds(i2c_byte_wait_us * (cmds_len + 1));
     
     /* wait for transfer to complete */
-    while (!Timeout && !(bcm2835_peri_read_nb(status) & BCM2835_BSC_S_DONE))
+    while (!(bcm2835_peri_read_nb(status) & BCM2835_BSC_S_DONE))
     {
         /* we must empty the FIFO as it is populated and not use any delay */
-        while (!Timeout && remaining && bcm2835_peri_read(status) & BCM2835_BSC_S_RXD)
+        while (remaining && bcm2835_peri_read(status) & BCM2835_BSC_S_RXD)
     	{
 	    /* Read from FIFO, no barrier */
 	    buf[i] = bcm2835_peri_read_nb(fifo);
 	    i++;
 	    remaining--;
-                    /* Make sure we don't loop forever! */
- 	    if (--Failsafe == 0)
- 	    {
- 		Timeout = 1;
- 		break;
- 	    }
     	}
-                /* Make sure we don't loop forever! */
-         if (--Failsafe == 0)
- 	{
- 	    Timeout = 1;
- 	    break;
- 	}
     }
     
     /* transfer has finished - grab any remaining stuff in FIFO */
-    while (!Timeout && remaining && (bcm2835_peri_read(status) & BCM2835_BSC_S_RXD))
+    while (remaining && (bcm2835_peri_read(status) & BCM2835_BSC_S_RXD))
     {
         /* Read from FIFO */
         buf[i] = bcm2835_peri_read(fifo);
@@ -1648,13 +1634,8 @@ uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint
         remaining--;
     }
     
-    if (Timeout)
-    {
-	/* We had a timeout */
-	reason = BCM2835_I2C_REASON_ERROR_TIMEOUT;
-    }
     /* Received a NACK */
-    else if (bcm2835_peri_read(status) & BCM2835_BSC_S_ERR)
+    if (bcm2835_peri_read(status) & BCM2835_BSC_S_ERR)
     {
 	reason = BCM2835_I2C_REASON_ERROR_NACK;
     }
