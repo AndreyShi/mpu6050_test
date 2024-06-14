@@ -1573,7 +1573,7 @@ uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint
     uint32_t remaining = cmds_len;
     uint32_t i = 0;
     uint8_t reason = BCM2835_I2C_REASON_OK;
-    unsigned long Failsafe = cmds_len * 10000;
+    unsigned long Failsafe = 500000;
     int           Timeout = 0;
     
     /* Clear FIFO */
@@ -1640,7 +1640,7 @@ uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint
     }
     
     /* transfer has finished - grab any remaining stuff in FIFO */
-    while (!Timeout && remaining && (bcm2835_peri_read(status) & BCM2835_BSC_S_RXD))
+    while (remaining && (bcm2835_peri_read(status) & BCM2835_BSC_S_RXD))
     {
         /* Read from FIFO */
         buf[i] = bcm2835_peri_read(fifo);
