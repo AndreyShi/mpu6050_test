@@ -38,7 +38,7 @@ To compile on a Raspberry Pi (1 or 2)
 */
 
 #include <stdio.h>
-#include <bcm2835.h>
+#include "bcm2835.h"
 #include "I2Cdev.h"
 //#include "MPU6050.h"
 #include "MPU6050_6Axis_MotionApps20.h"
