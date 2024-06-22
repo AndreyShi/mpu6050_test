@@ -93,6 +93,14 @@ float get_GyroY(void)
 float get_GyroZ(void)
 {return (float)gxyz[2]/16.4;}
 
+void print_all(void)
+{
+  printf("ypr  %.3f %.3f %.3f", ypr[0] * 180/M_PI, ypr[1] * 180/M_PI, ypr[2] * 180/M_PI);
+  printf("  acc %.3f %.3f %.3f  ",(float)aaReal.x/16384.0,(float)aaReal.y/16384.0,(float)aaReal.z/16384.0);
+  printf("spd %.3f %.3f %.3f",(float)gxyz[0]/16.4,(float)gxyz[1]/16.4,(float)gxyz[2]/16.4);//todo view uglova9 speed on display  
+  printf("\n");
+}
+
 int main(int argc, char **argv) {
 //int init_MPU(void) {
     if (!bcm2835_init())

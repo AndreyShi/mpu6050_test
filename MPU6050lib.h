@@ -16,6 +16,8 @@ extern "C" {
 
     int init_MPU(void);
 
+    void print_all(void);
+
 #ifdef __cplusplus
 }
 #endif
