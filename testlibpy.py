@@ -9,7 +9,7 @@ def func():
 
 th = Thread(target=func)
 th.start()
-sleep(1)
+sleep(1.2)
 while 1:
  MPU.print_all()
  sleep(0.1)
