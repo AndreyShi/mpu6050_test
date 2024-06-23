@@ -100,9 +100,12 @@ void print_all(void)
   printf("spd %.3f %.3f %.3f",(float)gxyz[0]/16.4,(float)gxyz[1]/16.4,(float)gxyz[2]/16.4);//todo view uglova9 speed on display  
   printf("\n");
 }
-
-int main(int argc, char **argv) {
-//int init_MPU(void) {
+#ifndef BUILD_LIB
+int main(int argc, char **argv) 
+#else
+int init_MPU(void) 
+#endif
+{
     if (!bcm2835_init())
         return 1; 
     // Set RPI pin P1-15 to be an input
@@ -163,7 +166,9 @@ int main(int argc, char **argv) {
         }
         mpuIntStatus = mpu.getIntStatus();
         fifoCount = mpu.getFIFOCount();
+        #ifndef BUILD_LIB
         printf("Int: %d  Cnt:%d  ",mpuIntStatus, fifoCount);
+        #endif
 
         if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
           mpu.resetFIFO();
@@ -185,17 +190,23 @@ int main(int argc, char **argv) {
           mpu.dmpGetGravity(&gravity, &q);
           mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
           //printf("%2ld:%2ld:%3ld  ", timer1m,timer1s,timer1ms);
+          #ifndef BUILD_LIB
           printf("ypr  %.3f %.3f %.3f", ypr[0] * 180/M_PI, ypr[1] * 180/M_PI, ypr[2] * 180/M_PI);
+          #endif
 
           //AFS_SEL Full Scale Range LSB Sensitivity 0 ±2g 16384 LSB/g, 1 ±4g 8192 LSB/g, 2 ±8g 4096 LSB/g, 3 ±16g 2048 LSB/g
           mpu.dmpGetAccel(&aa, fifoBuffer);//for linear
-          mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);//for linear          
+          mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);//for linear
+          #ifndef BUILD_LIB          
           printf("  acc %.3f %.3f %.3f  ",(float)aaReal.x/16384.0,(float)aaReal.y/16384.0,(float)aaReal.z/16384.0);// todo view LinearAccel on display  
+          #endif
 
           //FS_SEL Full Scale Range LSB Sensitivity 0 ±250 °/s 131 LSB/°/s, 1 ±500 °/s65.5 LSB/°/s, 2 ±1000 °/s 32.8 LSB/°/s, 3 ±2000 °/s 16.4 LSB/°/s
           mpu.dmpGetGyro(gxyz, fifoBuffer);//for uglova9 speed
+          #ifndef BUILD_LIB
           printf("spd %.3f %.3f %.3f",(float)gxyz[0]/16.4,(float)gxyz[1]/16.4,(float)gxyz[2]/16.4);//todo view uglova9 speed on display  
           printf("\n");
+          #endif
 
         } else if (mpuIntStatus == 1 && fifoCount == 0) {
             printf("resetting DMP...\n");

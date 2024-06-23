@@ -12,6 +12,6 @@ th.start()
 
 while 1:
  MPU.print_all()
- sleep(0.5)
+ sleep(0.1)
 
 th.join()

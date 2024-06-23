@@ -27,16 +27,16 @@ myprog1:
 	g++ -g -fpermissive MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp bcm2835.c -l m -o MPU6050_example_1
 	sudo gdb ./MPU6050_example_1
 mylib:
-	g++ -c MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m 
+	g++ -c -DBUILD_LIB MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m 
 	ar r libMPU6050.a *.o
 	rm *.o
 mylibshared:
-	g++ -c -fPIC MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m
+	g++ -c -fPIC -DBUILD_LIB MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp -l bcm2835 -l m
 	g++ -shared -o libMPU6050.so *.o
 	rm *.o
 mylibshared1:
-	g++ -c -fPIC -fpermissive MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp bcm2835.c -l m
+	g++ -c -fPIC -fpermissive -DBUILD_LIB MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp bcm2835.c -l m
 	g++ -shared -o libMPU6050.so *.o
 	rm *.o
 myproglib:
-	g++ testlib.cpp -pthread -L./ -lMPU6050 -l bcm2835 -l m -o testlib
+	g++ testlib.cpp -pthread -L./ -lMPU6050 -Wl,-rpath,./ -l m -o testlib

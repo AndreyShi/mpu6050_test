@@ -1,4 +1,5 @@
-#include <bcm2835.h>
+#include <chrono>
+#include <thread>
 #include <pthread.h>
 #include <cstdio>
 #include "MPU6050lib.h"
@@ -14,8 +15,8 @@ int main(int argc, char **argv) {
  
    pthread_create(&thread, NULL, threadFunc, thread_data);
    while(1){
-        delay(100);
-        printf("main thread: %.3f %.3f %.3f\n",get_yarn(),get_pitch(),get_roll());
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        print_all();//printf("main thread: %.3f %.3f %.3f\n",get_yarn(),get_pitch(),get_roll());
    }
    pthread_join(thread, NULL);
    return 0;
