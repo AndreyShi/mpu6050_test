@@ -14,6 +14,7 @@ int main(int argc, char **argv) {
    pthread_t thread;
  
    pthread_create(&thread, NULL, threadFunc, thread_data);
+   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
    while(1){
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         print_all();//printf("main thread: %.3f %.3f %.3f\n",get_yarn(),get_pitch(),get_roll());
