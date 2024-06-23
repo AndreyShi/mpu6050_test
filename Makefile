@@ -40,3 +40,4 @@ mylibshared1:
 	rm *.o
 myproglib:
 	g++ testlib.cpp -pthread -L./ -lMPU6050 -Wl,-rpath,./ -l m -o testlib
+	sudo ./testlib
