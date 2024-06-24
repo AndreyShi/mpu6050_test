@@ -127,7 +127,9 @@ int init_MPU(void)
 
   #ifndef DMP
   Serial.println(F("Initializing DMP..."));
+  mpu.PrintActiveOffsets();
   devStatus = mpu.dmpInitialize();
+  mpu.PrintActiveOffsets();
   if (devStatus == 0) {
         // Calibration Time: generate offsets and calibrate our MPU6050
         mpu.CalibrateAccel(6);//old 6
