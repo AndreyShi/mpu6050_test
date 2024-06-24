@@ -3340,7 +3340,9 @@ void MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops){
 	Serial.write('>');
 	for (int i = 0; i < 3; i++) {
 		I2Cdev::readWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data); // reads 1 or more 16 bit integers (Word)
+        #ifdef DEBUG_CALIB
         printf("SaveAddress:%d %d\n",SaveAddress + (i * shift),Data);
+        #endif
 		Reading = Data;
 		if(SaveAddress != MPU6050_RA_XG_OFFS_USRH){
 			BitZero[i] = Data & 1;										 // Capture Bit Zero to properly handle Accelerometer calibration
@@ -3349,7 +3351,9 @@ void MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops){
 			ITerm[i] = Reading * 4;
 		}
 	}
+    #ifdef DEBUG_CALIB
     printf("SaveAddress:%d BitZero,ITerm X: %d %.3f Y: %d %.3f Z: %d %.3f\n\n",SaveAddress,BitZero[0],ITerm[0],BitZero[1],ITerm[1],BitZero[2],ITerm[2]);
+    #endif
 	for (int L = 0; L < Loops; L++) {
 		eSample = 0;
 		for (int c = 0; c < 100; c++) {// 100 PI Calculations
@@ -3370,7 +3374,9 @@ void MPU6050::PID(uint8_t ReadAddress, float kP,float kI, uint8_t Loops){
                 Data_test_bias[i] = Data;
 				I2Cdev::writeWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t *)&Data);
 			}
+            #ifdef DEBUG_CALIB
             printf("ReadAddress:%d c:%d  X:%d->%d Y:%d->%d Z:%d->%d \n",ReadAddress, c,Data_test[0],Data_test_bias[0],Data_test[1],Data_test_bias[1],Data_test[2],Data_test_bias[2]);
+            #endif
 			if((c == 99) && eSum > 1000){						// Error is still to great to continue 
 				c = 0;
 				Serial.write('*');
