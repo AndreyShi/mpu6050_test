@@ -1,0 +1,43 @@
+import socket
+from time import sleep
+from ctypes import cdll
+from ctypes import *
+from threading import Thread
+
+MPU = cdll.LoadLibrary('./libMPU6050.so')
+MPU.get_yarn.restype = c_float
+MPU.get_pitch.restype = c_float
+MPU.get_roll.restype = c_float
+MPU.get_AccX.restype = c_float
+MPU.get_AccY.restype = c_float
+MPU.get_AccZ.restype = c_float
+MPU.get_GyroX.restype = c_float
+MPU.get_GyroY.restype = c_float
+MPU.get_GyroZ.restype = c_float
+
+def func():
+	MPU.init_MPU()
+
+th = Thread(target=func)
+th.start()
+sleep(1.2)
+
+bufferSize=1024
+msgFromServer="I'am Server"
+ServerPort=2222
+ServerIP='192.168.0.100'
+bytesToSend=msgFromServer.encode('utf-8')
+RPIsocket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+RPIsocket.bind((ServerIP,ServerPort))
+print('Server is Up and Listening...')
+while 1:
+ message,address=RPIsocket.recvfrom(bufferSize)
+ message=message.decode('utf-8')
+ print(message)
+ print('Client Address',address[0])
+ if message == 'give_MPU_data':
+  MPU_data = (MPU.get_yarn(),MPU.get_pitch(),MPU.get_roll(),MPU.get_AccX(),MPU.get_AccY(),MPU.get_AccZ(),MPU.get_GyroX(),MPU.get_GyroY(),MPU.get_GyroZ())
+  print(MPU_data)
+  RPIsocket.sendto(MPU_data,address)
+ else:
+  RPIsocket.sendto(bytesToSend,address)
