@@ -3,6 +3,7 @@ from time import sleep
 from ctypes import cdll
 from ctypes import *
 from threading import Thread
+import struct
 
 MPU = cdll.LoadLibrary('./libMPU6050.so')
 MPU.get_yarn.restype = c_float
@@ -35,9 +36,10 @@ while 1:
  message=message.decode('utf-8')
  print(message)
  print('Client Address',address[0])
- if message == 'give_MPU_data':
+ if message == 'give_MPU_bin_data':
   MPU_data = (MPU.get_yarn(),MPU.get_pitch(),MPU.get_roll(),MPU.get_AccX(),MPU.get_AccY(),MPU.get_AccZ(),MPU.get_GyroX(),MPU.get_GyroY(),MPU.get_GyroZ())
   print(MPU_data)
-  RPIsocket.sendto(MPU_data,address)
+  bytes_obj = struct.pack('!fffffffff',*MPU_data)
+  RPIsocket.sendto(bytes_obj,address)
  else:
   RPIsocket.sendto(bytesToSend,address)
