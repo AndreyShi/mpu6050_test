@@ -3,3 +3,5 @@
 
 реализация точки доступа https://github.com/idev1/rpihotspot , пока получилось использовать только как точка доступа (без uap0),
 для этого в файле /etc/hostapd/hostapd.conf в строке interface=uap0 заменил uap0 на wlan0
+скрипт запускался:
+sudo ./setup-network.sh --install --ap-ssid="abc-1" --ap-password="password@1" --ap-password-encrypt --ap-country-code="RU" --ap-ip-address="192.168.0.1" --wifi-interface="wlan0"
