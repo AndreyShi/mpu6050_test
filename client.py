@@ -3,7 +3,7 @@ import struct
 
 msgFromClient = 'give_MPU_bin_data'
 bytesToSend = msgFromClient.encode('utf-8')
-serverAddress=('169.254.80.189',2222)
+serverAddress=('172.16.0.1',2222)
 bufferSize=1024
 UDPClient=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 UDPClient.sendto(bytesToSend,serverAddress)
