@@ -547,6 +547,11 @@ doCleanup() {
         echo "[Remove]: $netShutdownFlagFile"
         rm -f $netShutdownFlagFile
     fi
+
+    if [ -f "/etc/udev/rules.d/90-wireless.rules" ]; then
+        echo "[Remove]: /etc/udev/rules.d/90-wireless.rules"
+        rm -f /etc/udev/rules.d/90-wireless.rules
+    fi
     
     doRemoveIpTableNatEntries
 
@@ -598,7 +603,7 @@ echo "[WLAN]: ${wlanInterfaceName} IP Broadcast address: $wlanIpCast"
 echo "[WLAN]: ${wlanInterfaceName} Country Code: $wlanCountryCode"
 echo "[WLAN]: ${wlanInterfaceName} Channel: $wlanChannel"
 
-doCleanup 
+doCleanup
 
 touch $netLogFile
 chmod ug+w $netLogFile
@@ -849,6 +854,12 @@ systemctl enable netStop.service
 systemctl start netStop.service
 
 chmod ug+x /etc/rc.local
+
+# FIX uap0 no such device error https://github.com/idev1/rpihotspot/issues/40
+touch /etc/udev/rules.d/90-wireless.rules
+cat > /etc/udev/rules.d/90-wireless.rules <<EOF
+ACTION=="add", SUBSYSTEM=="ieee80211", KERNEL=="phy0", RUN+="/sbin/iw phy %k interface add uap0 type __ap"
+EOF
 
 echo "[Install]: DONE"
 
