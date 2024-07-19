@@ -554,6 +554,16 @@ doCleanup() {
         echo "[Remove]: /etc/udev/rules.d/90-wireless.rules"
         rm -f /etc/udev/rules.d/90-wireless.rules
     fi
+
+    if [ -f "$installDirmpu/server.py" ]; then
+        echo "[Remove]: $installDirmpu/server.py"
+        rm -f $installDirmpu/server.py
+    fi
+
+    if [ -f "$installDirmpu/libMPU6050.so" ]; then
+        echo "[Remove]: $installDirmpu/libMPU6050.so"
+        rm -f $installDirmpu/libMPU6050.so
+    fi
     
     doRemoveIpTableNatEntries
 
