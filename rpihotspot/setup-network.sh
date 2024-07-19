@@ -60,6 +60,7 @@ countryCodeArray=('AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'A
 
 workDir="/home/pi"
 installDir="$workDir/network-setup"
+installDirmpu="$workDir/mpu-setup"
 logDir="$installDir/log"
 execDir="$installDir/bin"
 downloadDir="$installDir/downloads"
@@ -338,6 +339,7 @@ EOF
 
 # Create initial directories:
 mkdir -p $installDir
+mkdir -p $installDirmpu
 mkdir -p $logDir
 mkdir -p $execDir
 mkdir -p $downloadDir
@@ -860,6 +862,9 @@ touch /etc/udev/rules.d/90-wireless.rules
 cat > /etc/udev/rules.d/90-wireless.rules <<EOF
 ACTION=="add", SUBSYSTEM=="ieee80211", KERNEL=="phy0", RUN+="/sbin/iw phy %k interface add uap0 type __ap"
 EOF
+
+cp ../libMPU6050.so $installDirmpu
+cp ../server.py $installDirmpu
 
 echo "[Install]: DONE"
 
