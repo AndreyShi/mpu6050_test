@@ -1,6 +1,6 @@
 # Установка Wifi HOTSPOT и запуск сервера MPU  
 Для установки точки доступа зайти в директорию rpihotspot и выполнить make,  
-все настройки сервера прописаны в Makefile: rpihotspot/Makefile  
+все настройки точки доступа прописаны в Makefile: rpihotspot/Makefile  
 описание настроек в rpihotspot/README.md  
 установка будет длиться около 5 минут в конце будет reboot  
 после установки для запуска сервера зайти в папку /home/pi/mpu-setup и  
