@@ -139,6 +139,12 @@ bool I2Cdev::writeBit(uint8_t devAddr, uint8_t regAddr, uint8_t bitNum, uint8_t 
   bcm2835_i2c_setSlaveAddress(devAddr);
   //first reading registery value
   sendBuf[0] = regAddr;
+  if(regAddr == 0x6A && bitNum == 2) //0x6A MPU6050_RA_USER_CTRL, 0x02 MPU6050_USERCTRL_FIFO_RESET_BIT
+  {
+    sendBuf[1] = 0xC4;
+    uint8_t response = bcm2835_i2c_write(sendBuf, 2);
+    return response == BCM2835_I2C_REASON_OK;
+  }
   uint8_t response = bcm2835_i2c_write_read_rs(sendBuf, 1, recvBuf, 1 );
   if ( response == BCM2835_I2C_REASON_OK ) {
     uint8_t b = recvBuf[0] ;
