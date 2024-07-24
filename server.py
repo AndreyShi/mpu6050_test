@@ -5,7 +5,7 @@ from ctypes import *
 from threading import Thread
 import struct
 
-MPU = cdll.LoadLibrary('./libMPU6050.so')
+MPU = cdll.LoadLibrary('/home/pi/mpu-setup/libMPU6050.so')
 MPU.get_yarn.restype = c_float
 MPU.get_pitch.restype = c_float
 MPU.get_roll.restype = c_float
