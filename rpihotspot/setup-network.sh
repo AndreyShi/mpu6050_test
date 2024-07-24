@@ -68,6 +68,7 @@ netStartFile="$execDir/netStart"
 netStopFile="$execDir/netStop.sh"
 netLogFile="$logDir/network.log"
 netStopServiceFile="/etc/systemd/system/netStop.service"
+mpuServiceFile="/etc/systemd/system/mpuServ.service"
 netStationConfigFile="/etc/network/interfaces.d/station"
 netShutdownFlagFile="$logDir/netShutdownFlag"
 shutdownRecoveryFile="$execDir/shutdownRecovery"
@@ -564,6 +565,17 @@ doCleanup() {
         echo "[Remove]: $installDirmpu/libMPU6050.so"
         rm -f $installDirmpu/libMPU6050.so
     fi
+
+    if [ $(systemctl list-unit-files --type=service 2>/dev/null | grep -c 'mpuServ.service') -gt 0 ]; then
+        systemctl stop mpuServ.service
+        systemctl disable mpuServ.service
+        echo "[Remove]: stop/disable service -> mpuService"
+    fi
+
+    if [ -f "$mpuServiceFile" ]; then
+        echo "[Remove]: $mpuServiceFile"
+        rm -f $mpuServiceFile
+    fi
     
     doRemoveIpTableNatEntries
 
@@ -812,6 +824,10 @@ echo "Enabling netStop service..."
 systemctl enable netStop.service
 systemctl start netStop.service
 
+echo "Enabling mpuServ service..."
+systemctl enable mpuServ.service
+systemctl start mpuServ.service
+
 echo "netStart DONE"
 bash -c 'echo "\$(date +"%Y-%m-%d %T") - Started: hostapd, dnsmasq, dhcpcd" >> $netLogFile'
 EOF
@@ -864,6 +880,18 @@ echo "[Install]: enabling netStop.service ..."
 
 systemctl enable netStop.service
 systemctl start netStop.service
+
+cat > $mpuServiceFile <<EOF
+[Unit]
+Description=Start server for reading yaw pitch roll
+
+[Service]
+Type=simple
+ExecStart=python /home/pi/mpu-setup/server.py
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 chmod ug+x /etc/rc.local
 
