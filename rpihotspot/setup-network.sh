@@ -884,11 +884,13 @@ systemctl start netStop.service
 cat > $mpuServiceFile <<EOF
 [Unit]
 Description=Start server for reading yaw pitch roll
-
+Requires=hostapd.service dhcpcd.service dnsmasq.service
+After=hostapd.service dhcpcd.service dnsmasq.service
 [Service]
 Type=simple
 ExecStart=python /home/pi/mpu-setup/server.py
 
+Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 EOF
