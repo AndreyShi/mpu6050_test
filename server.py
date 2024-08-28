@@ -4,6 +4,7 @@ from ctypes import cdll
 from ctypes import *
 from threading import Thread
 import struct
+import serial_dalnomer
 
 MPU = cdll.LoadLibrary('/home/pi/mpu-setup/libMPU6050.so')
 MPU.get_yarn.restype = c_float
@@ -22,6 +23,13 @@ def func():
 th = Thread(target=func)
 th.start()
 sleep(1.2)
+
+def func2():
+    serial_dalnomer.poll()
+
+th2 = Thread(target=func2)
+th2.start()
+sleep(2)
 
 bufferSize=1024
 msgFromServer="I'am Server"
