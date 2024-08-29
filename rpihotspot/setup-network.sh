@@ -566,6 +566,11 @@ doCleanup() {
         rm -f $installDirmpu/libMPU6050.so
     fi
 
+    if [ -f "$installDirmpu/dalnomer.py" ]; then
+        echo "[Remove]: $installDirmpu/dalnomer.py"
+        rm -f $installDirmpu/dalnomer.py
+    fi
+
     if [ $(systemctl list-unit-files --type=service 2>/dev/null | grep -c 'mpuServ.service') -gt 0 ]; then
         systemctl stop mpuServ.service
         systemctl disable mpuServ.service
@@ -905,6 +910,7 @@ EOF
 
 cp ../libMPU6050.so $installDirmpu
 cp ../server.py $installDirmpu
+cp ../dalnomer.py $installDirmpu
 
 echo "[Install]: DONE"
 
