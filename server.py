@@ -4,7 +4,7 @@ from ctypes import cdll
 from ctypes import *
 from threading import Thread
 import struct
-import serial_dalnomer
+import dalnomer
 
 MPU = cdll.LoadLibrary('/home/pi/mpu-setup/libMPU6050.so')
 MPU.get_yarn.restype = c_float
@@ -25,7 +25,7 @@ th.start()
 sleep(1.2)
 
 def func2():
-    serial_dalnomer.poll()
+    dalnomer.poll()
 
 th2 = Thread(target=func2)
 th2.start()
