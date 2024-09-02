@@ -49,5 +49,8 @@ while 1:
   print(MPU_data)
   bytes_obj = struct.pack('!fffffffff',*MPU_data)
   RPIsocket.sendto(bytes_obj,address)
+ elif message == 'get_distance':
+  bytes_obj = bytes(dalnomer.distance,'utf-8')
+  RPIsocket.sendto(bytes_obj,address)
  else:
   RPIsocket.sendto(bytesToSend,address)

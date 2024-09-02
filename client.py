@@ -2,6 +2,7 @@ import socket
 import struct
 
 msgFromClient = 'give_MPU_bin_data'
+#msgFromClient = 'get_distance'
 bytesToSend = msgFromClient.encode('utf-8')
 serverAddress=('172.16.0.1',2222)
 bufferSize=1024
