@@ -3,6 +3,7 @@ import re
 
 distance = 'measurment distance from device'
 def poll():
+ global distance
  ser = serial.Serial('/dev/ttyS0', 115200, timeout=2)
  #ser.open()
  if ser.isOpen():
@@ -19,4 +20,4 @@ def poll():
  ser.write(str.encode('<MAStop>'))
  ser.close()
 
-poll()
+#poll()

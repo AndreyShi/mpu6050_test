@@ -4,7 +4,7 @@ from ctypes import cdll
 from ctypes import *
 from threading import Thread
 import struct
-#import dalnomer
+import dalnomer
 
 MPU = cdll.LoadLibrary('/home/pi/mpu-setup/libMPU6050.so')
 MPU.get_yarn.restype = c_float
@@ -21,9 +21,9 @@ th = Thread(target=MPU.init_MPU)
 th.start()
 sleep(1.2)
 
-#th2 = Thread(target=dalnomer.poll)
-#th2.start()
-#sleep(2)
+th2 = Thread(target=dalnomer.poll)
+th2.start()
+sleep(2)
 
 bufferSize=1024
 msgFromServer="I'am Server"
