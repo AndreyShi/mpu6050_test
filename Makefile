@@ -38,6 +38,9 @@ mylibshared1:
 	g++ -c -fPIC -fpermissive -DBUILD_LIB MPU6050_example_1.cpp I2Cdev.cpp MPU6050.cpp MPU6050_6Axis_MotionApps20.cpp bcm2835.c -l m
 	g++ -shared -o libMPU6050.so *.o
 	rm *.o
+myspi:
+	gcc -o spi -I ./ bcm2835.c spi.c
+	sudo ./spi
 myproglib:
 	g++ testlib.cpp -pthread -L./ -lMPU6050 -Wl,-rpath,./ -l m -o testlib
 	sudo ./testlib
