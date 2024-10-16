@@ -25,16 +25,24 @@ th2 = Thread(target=dalnomer.poll)
 th2.start()
 sleep(2)
 
+#потоковая функция
+#def optic_flow():
+# инициализация датчика оптического потока
+# while 1:
+#  получение дельты от оптического потока
+#  рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
+#  пауза от 10 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
+
 bufferSize=1024
 msgFromServer="I'am Server"
 ServerPort=2222
-ServerIP='172.16.0.1'
+ServerIP='172.16.0.1'# it's host wlan ip
 bytesToSend=msgFromServer.encode('utf-8')
 RPIsocket=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 RPIsocket.bind((ServerIP,ServerPort))
 print('Server is Up and Listening...')
 while 1:
- message,address=RPIsocket.recvfrom(bufferSize)
+ message,address=RPIsocket.recvfrom(bufferSize) #blocking
  message=message.decode('utf-8')
  print(message)
  print('Client Address',address[0])
