@@ -26,6 +26,8 @@
 //#include "Arduino.h"
 
 #include <stdint.h>
+#include <cstdio>
+#define boolean bool
 
 class Bitcraze_PMW3901 {
 public:
