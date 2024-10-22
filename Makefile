@@ -41,6 +41,9 @@ mylibshared1:
 myspi:
 	gcc -o spi -I ./ bcm2835.c spi.c
 	sudo ./spi
+myspicpp:
+	g++ -o spi -I ./ bcm2835.c spicpp.cpp Bitcraze_PMW3901.cpp
+	sudo ./spi
 myproglib:
 	g++ testlib.cpp -pthread -L./ -lMPU6050 -Wl,-rpath,./ -l m -o testlib
 	sudo ./testlib

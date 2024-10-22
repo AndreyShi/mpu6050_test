@@ -22,7 +22,8 @@
 
 #include "Bitcraze_PMW3901.h"
 
-#include <SPI.h>
+//#include <SPI.h>
+#include <bcm2835.h>
 
 #define CHIP_ID         0x49  // 01001001
 #define CHIP_ID_INVERSE 0xB6  // 10110110
@@ -33,22 +34,40 @@ Bitcraze_PMW3901::Bitcraze_PMW3901(uint8_t cspin)
 
 boolean Bitcraze_PMW3901::begin(void) {
   // Setup SPI port
-  SPI.begin();
-  pinMode(_cs, OUTPUT);
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  //SPI.begin();
+  //pinMode(_cs, OUTPUT);
+  //SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
   // Make sure the SPI bus is reset
-  digitalWrite(_cs, HIGH);
-  delay(1);
-  digitalWrite(_cs, LOW);
-  delay(1);
-  digitalWrite(_cs, HIGH);
-  delay(1);
+  //digitalWrite(_cs, HIGH);
+  //delay(1);
+  //digitalWrite(_cs, LOW);
+  //delay(1);
+  //digitalWrite(_cs, HIGH);
+  //delay(1);
 
-  SPI.endTransaction();
+  //SPI.endTransaction();
+    if (!bcm2835_init())
+    {
+      printf("bcm2835_init failed. Are you running as root??\n");
+      return false;
+    }
+
+    if (!bcm2835_spi_begin())
+    {
+      printf("bcm2835_spi_begin failed. Are you running as root??\n");
+      return false;
+    }
+    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
+    bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
+    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_65536); // The default
+    bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
+    bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
+
 
   // Power on reset
   registerWrite(0x3A, 0x5A);
+
   delay(5);
   // Test the SPI communication, checking chipId and inverse chipId
   uint8_t chipId = registerRead(0x00);
@@ -147,44 +166,52 @@ void Bitcraze_PMW3901::readFrameBuffer(char *FBuffer)
 
 // Low level register access
 void Bitcraze_PMW3901::registerWrite(uint8_t reg, uint8_t value) {
-  reg |= 0x80u;
+  //reg |= 0x80u;
 
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  //SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
-  digitalWrite(_cs, LOW);
+  //digitalWrite(_cs, LOW);
 
-  delayMicroseconds(50);
-  SPI.transfer(reg);
-  SPI.transfer(value);
-  delayMicroseconds(50);
+  //delayMicroseconds(50);
+  //SPI.transfer(reg);
+  //SPI.transfer(value);
+  //delayMicroseconds(50);
 
-  digitalWrite(_cs, HIGH);
+  //digitalWrite(_cs, HIGH);
 
-  SPI.endTransaction();
+  //SPI.endTransaction();
 
-  delayMicroseconds(200);
+  //delayMicroseconds(200);
+  char rg_vl[2] = {reg, value};
+  bcm2835_spi_writenb(rg_vl, 2);
+
 }
 
 uint8_t Bitcraze_PMW3901::registerRead(uint8_t reg) {
-  reg &= ~0x80u;
+  //reg &= ~0x80u;
 
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  //SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
-  digitalWrite(_cs, LOW);
+  //digitalWrite(_cs, LOW);
 
-  delayMicroseconds(50);
-  SPI.transfer(reg);
-  delayMicroseconds(50);
-  uint8_t value = SPI.transfer(0);
-  delayMicroseconds(100);
+  //delayMicroseconds(50);
+ // SPI.transfer(reg);
+  //delayMicroseconds(50);
+  //uint8_t value = SPI.transfer(0);
+  //delayMicroseconds(100);
 
-  digitalWrite(_cs, HIGH);
+  //digitalWrite(_cs, HIGH);
 
   //delayMicroseconds(200);
 
-  SPI.endTransaction();
+  //SPI.endTransaction();
+  //return value;
 
-  return value;
+  char buft[2] = {reg,0x00};
+  char bufr[2] = {0x00};
+  bcm2835_spi_transfernb(buft,bufr,2);
+
+  return bufr[1];
 }
 
 // Performance optimisation registers

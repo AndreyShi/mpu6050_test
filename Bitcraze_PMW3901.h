@@ -23,7 +23,7 @@
 #ifndef __BITCRAZE_PMW3901_H__
 #define __BITCRAZE_PMW3901_H__
 
-#include "Arduino.h"
+//#include "Arduino.h"
 
 #include <stdint.h>
 
