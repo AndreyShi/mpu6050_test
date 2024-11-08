@@ -29,19 +29,25 @@
 #include <cstdio>
 #define boolean bool
 
+
+
 class Bitcraze_PMW3901 {
 public:
   Bitcraze_PMW3901(uint8_t cspin);
 
   boolean begin(void);
 
-  void readMotionCount(int16_t *deltaX, int16_t *deltaY);
+  void readMotionCount(int16_t *deltaX = 0, int16_t *deltaY = 0);
+  int16_t getX();
+  int16_t getY();
   void enableFrameBuffer();
   void readFrameBuffer(char *FBuffer);
 
   void setLed(bool ledOn);
 
 private:
+  int16_t deltaX_g;
+  int16_t deltaY_g;
   uint8_t _cs;
 
   void registerWrite(uint8_t reg, uint8_t value);

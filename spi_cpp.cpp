@@ -8,13 +8,11 @@ int main(){
        { printf("init failed\n");}
     else
        { printf("init ok\n");}
-   int16_t deltaX = 0;
-   int16_t deltaY = 0;
 
    for(int i = 0; i < 20;i++)
    {
-      obj.readMotionCount(&deltaX, &deltaY);
-      printf("x:%d   y:%d\n",deltaX, &deltaY);
+      obj.readMotionCount();
+      printf("x:%d   y:%d\n",obj.getX(), obj.getY());
       delay(1000);
    }
 
