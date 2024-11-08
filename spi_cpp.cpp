@@ -3,16 +3,15 @@
 
 int main(){
 
-    Bitcraze_PMW3901 obj(0);
-    if(obj.begin() == 0)
+    if(Bitcraze_PMW3901_begin() == 0)
        { printf("init failed\n");}
     else
        { printf("init ok\n");}
 
    for(int i = 0; i < 20;i++)
    {
-      obj.readMotionCount();
-      printf("x:%d   y:%d\n",obj.getX(), obj.getY());
+      Bitcraze_PMW3901_readMotionCount();
+      printf("x:%d   y:%d\n",Bitcraze_PMW3901_getX(), Bitcraze_PMW3901_getY());
       delay(1000);
    }
 

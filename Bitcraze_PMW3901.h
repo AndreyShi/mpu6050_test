@@ -29,7 +29,10 @@
 #include <cstdio>
 #define boolean bool
 
-
+bool Bitcraze_PMW3901_begin();
+void Bitcraze_PMW3901_readMotionCount();
+int16_t Bitcraze_PMW3901_getX();
+int16_t Bitcraze_PMW3901_getY();
 
 class Bitcraze_PMW3901 {
 public:
@@ -54,5 +57,5 @@ private:
   uint8_t registerRead(uint8_t reg);
   void initRegisters(void);
 };
-
+extern Bitcraze_PMW3901 obj;
 #endif //__BITCRAZE_PMW3901_H__

@@ -28,6 +28,28 @@
 #define CHIP_ID         0x49  // 01001001
 #define CHIP_ID_INVERSE 0xB6  // 10110110
 
+Bitcraze_PMW3901 obj(0);
+
+bool Bitcraze_PMW3901_begin()
+{
+  return obj.begin();
+}
+
+void Bitcraze_PMW3901_readMotionCount()
+{
+  obj.readMotionCount();
+}
+
+int16_t Bitcraze_PMW3901_getX()
+{
+  return obj.getX();
+}
+
+int16_t Bitcraze_PMW3901_getY()
+{
+  return obj.getY();
+}
+
 Bitcraze_PMW3901::Bitcraze_PMW3901(uint8_t cspin)
   : _cs(cspin)
 { }
@@ -318,3 +340,4 @@ void Bitcraze_PMW3901::setLed(bool ledOn)
   registerWrite(0x6f, ledOn ? 0x1c : 0x00);
   registerWrite(0x7f, 0x00);
 }
+
