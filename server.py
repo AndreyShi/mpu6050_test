@@ -16,6 +16,10 @@ MPU.get_AccZ.restype = c_float
 MPU.get_GyroX.restype = c_float
 MPU.get_GyroY.restype = c_float
 MPU.get_GyroZ.restype = c_float
+DAL = cdll.LoadLibrary('/home/pi/mpu-setup/libPMW3901.so')
+DAL.Bitcraze_PMW3901_begin = c_bool
+DAL.Bitcraze_PMW3901_getX = c_int16
+DAL.Bitcraze_PMW3901_getY = c_int16
 
 th = Thread(target=MPU.init_MPU)
 th.start()
@@ -26,12 +30,19 @@ th2.start()
 sleep(2)
 
 #потоковая функция
-#def optic_flow():
-# инициализация датчика оптического потока
-# while 1:
-#  получение дельты от оптического потока
+def optic_flow():
+ DAL.Bitcraze_PMW3901_begin()# инициализация датчика оптического потока
+ while 1:
+  #  получение дельты от оптического потока
+  DAL.Bitcraze_PMW3901_readMotionCount()
+  delX = DAL.Bitcraze_PMW3901_getX()
+  delY = DAL.Bitcraze_PMW3901_getY()
+  # сконвертировать dalnomer.distance во float
 #  рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
 #  пауза от 10 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
+th3 = Thread(target=optic_flow)
+th3.start()
+sleep(1)
 
 bufferSize=1024
 msgFromServer="I'am Server"

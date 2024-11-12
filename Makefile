@@ -44,6 +44,10 @@ myspi:
 myspicpp:
 	g++ -fpermissive -o spi -I ./ bcm2835.c spi_cpp.cpp Bitcraze_PMW3901.cpp
 	sudo ./spi
+myspicpplib:
+	g++ -c -fPIC -fpermissive -I ./ bcm2835.c Bitcraze_PMW3901.cpp
+	g++ -shared -o libPMW3901.so *.o
+	rm *.o
 myproglib:
 	g++ testlib.cpp -pthread -L./ -lMPU6050 -Wl,-rpath,./ -l m -o testlib
 	sudo ./testlib
