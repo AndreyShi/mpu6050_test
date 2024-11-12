@@ -30,6 +30,8 @@ th2.start()
 sleep(2)
 
 #потоковая функция
+delX = 0
+delY = 0
 def optic_flow():
  DAL.Bitcraze_PMW3901_begin()# инициализация датчика оптического потока
  while 1:
@@ -64,6 +66,9 @@ while 1:
   RPIsocket.sendto(bytes_obj,address)
  elif message == 'get_distance':
   bytes_obj = bytes(dalnomer.distance,'utf-8')
+  RPIsocket.sendto(bytes_obj,address)
+ elif message == 'get_flow_delta':
+  bytes_obj = bytes(delX,'utf-8')
   RPIsocket.sendto(bytes_obj,address)
  else:
   RPIsocket.sendto(bytesToSend,address)
