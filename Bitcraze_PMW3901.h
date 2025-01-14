@@ -29,10 +29,16 @@
 #include <cstdio>
 #define boolean bool
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 bool Bitcraze_PMW3901_begin();
 void Bitcraze_PMW3901_readMotionCount();
 int16_t Bitcraze_PMW3901_getX();
 int16_t Bitcraze_PMW3901_getY();
+#ifdef __cplusplus
+}
+#endif
 
 class Bitcraze_PMW3901 {
 public:
