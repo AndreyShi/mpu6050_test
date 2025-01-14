@@ -17,9 +17,9 @@ MPU.get_GyroX.restype = c_float
 MPU.get_GyroY.restype = c_float
 MPU.get_GyroZ.restype = c_float
 DAL = cdll.LoadLibrary('./libPMW3901.so')
-DAL.Bitcraze_PMW3901_begin = c_bool
-DAL.Bitcraze_PMW3901_getX = c_int16
-DAL.Bitcraze_PMW3901_getY = c_int16
+DAL.Bitcraze_PMW3901_begin.restype = c_bool
+DAL.Bitcraze_PMW3901_getX.restype = c_int16
+DAL.Bitcraze_PMW3901_getY.restype = c_int16
 
 th = Thread(target=MPU.init_MPU)
 th.start()
