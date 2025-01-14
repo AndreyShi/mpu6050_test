@@ -31,7 +31,8 @@
 Bitcraze_PMW3901 obj(0);
 
 void testPy(){
-  printf("testPy: Hello from lib4\n");
+  printf("testPy: Hello from lib5\n");
+  obj.begin();
 }
 
 bool Bitcraze_PMW3901_begin()
