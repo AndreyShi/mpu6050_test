@@ -49,6 +49,7 @@ public:
   boolean begin(void);
 
   void readMotionCount(int16_t *deltaX = 0, int16_t *deltaY = 0);
+  void readMotionCountGlob(void);
   int16_t getX();
   int16_t getY();
   void enableFrameBuffer();

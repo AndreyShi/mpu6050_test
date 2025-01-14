@@ -31,18 +31,19 @@
 Bitcraze_PMW3901 obj(0);
 
 void testPy(){
-  printf("testPy: Hello from lib6\n");
+  printf("testPy: Hello from lib7\n");
 }
 
 bool Bitcraze_PMW3901_begin()
 {
   printf("i am in fuction Bitcraze_PMW3901_begin()\n");
-  return obj.begin();
+  bool tp = obj.begin();
+  return tp;
 }
 
 void Bitcraze_PMW3901_readMotionCount()
 {
-  obj.readMotionCount(0,0);
+  obj.readMotionCountGlob();
 }
 
 int16_t Bitcraze_PMW3901_getX()
@@ -119,6 +120,16 @@ boolean Bitcraze_PMW3901::begin(void) {
 }
 
 // Functional access
+void Bitcraze_PMW3901::readMotionCountGlob(void)
+{
+  int16_t tmpX = 0;
+  int16_t tmpY = 0;
+  registerRead(0x02);
+  tmpX = ((int16_t)registerRead(0x04) << 8) | registerRead(0x03);
+  tmpY = ((int16_t)registerRead(0x06) << 8) | registerRead(0x05);
+   deltaX_g = tmpX;
+   deltaY_g = tmpY;
+}
 
 void Bitcraze_PMW3901::readMotionCount(int16_t *deltaX, int16_t *deltaY)
 {
