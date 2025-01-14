@@ -36,9 +36,11 @@ bool Bitcraze_PMW3901_begin();
 void Bitcraze_PMW3901_readMotionCount();
 int16_t Bitcraze_PMW3901_getX();
 int16_t Bitcraze_PMW3901_getY();
+void testPy();
 #ifdef __cplusplus
 }
 #endif
+
 
 class Bitcraze_PMW3901 {
 public:
