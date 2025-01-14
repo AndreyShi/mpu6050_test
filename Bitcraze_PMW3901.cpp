@@ -37,7 +37,8 @@ void testPy(){
 bool Bitcraze_PMW3901_begin()
 {
   printf("i am in fuction Bitcraze_PMW3901_begin()\n");
-  return obj.begin();
+  return 1;
+  //return obj.begin();
 }
 
 void Bitcraze_PMW3901_readMotionCount()
