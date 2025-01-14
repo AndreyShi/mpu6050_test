@@ -31,20 +31,18 @@
 Bitcraze_PMW3901 obj(0);
 
 void testPy(){
-  printf("testPy: Hello from lib5\n");
-  obj.begin();
+  printf("testPy: Hello from lib6\n");
 }
 
 bool Bitcraze_PMW3901_begin()
 {
   printf("i am in fuction Bitcraze_PMW3901_begin()\n");
-  return 1;
-  //return obj.begin();
+  return obj.begin();
 }
 
 void Bitcraze_PMW3901_readMotionCount()
 {
-  obj.readMotionCount();
+  obj.readMotionCount(0,0);
 }
 
 int16_t Bitcraze_PMW3901_getX()
