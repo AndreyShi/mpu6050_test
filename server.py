@@ -39,9 +39,10 @@ def optic_flow():
   DAL.Bitcraze_PMW3901_readMotionCount()
   delX = DAL.Bitcraze_PMW3901_getX()
   delY = DAL.Bitcraze_PMW3901_getY()
+  print('dalnomer.distance:',dalnomer.distance,'delX:',delX,'delY:',delY)
   # сконвертировать dalnomer.distance во float
   # рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
-  sleep(0.1)#  пауза от 100 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
+  sleep(1)#  пауза от 100 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
 th3 = Thread(target=optic_flow)
 th3.start()
 sleep(1)
