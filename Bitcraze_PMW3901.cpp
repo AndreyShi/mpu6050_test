@@ -36,6 +36,7 @@ void testPy(){
 
 bool Bitcraze_PMW3901_begin()
 {
+  printf("i am in fuction Bitcraze_PMW3901_begin()\n");
   return obj.begin();
 }
 
@@ -59,6 +60,7 @@ Bitcraze_PMW3901::Bitcraze_PMW3901(uint8_t cspin)
 { }
 
 boolean Bitcraze_PMW3901::begin(void) {
+  printf("i am in Bitcraze_PMW3901::begin(void)\n");
   // Setup SPI port
   //SPI.begin();
   //pinMode(_cs, OUTPUT);
