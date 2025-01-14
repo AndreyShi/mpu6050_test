@@ -11,6 +11,10 @@ DAL.Bitcraze_PMW3901_getY = c_int16
 
 print("Test call function \"testPy\" from lib")
 DAL.testPy()
-DAL.readFlow()
+for _ in range(10):
+    DAL.readFlow()
+    print('X:',DAL.Bitcraze_PMW3901_getX())
+    print('Y:',DAL.Bitcraze_PMW3901_getY())
+    sleep(1)
 #DAL.Bitcraze_PMW3901_begin()
 #DAL.Bitcraze_PMW3901_readMotionCount()
