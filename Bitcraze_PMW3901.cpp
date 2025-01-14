@@ -31,7 +31,13 @@
 Bitcraze_PMW3901 obj(0);
 
 void testPy(){
-  printf("testPy: Hello from lib7\n");
+  printf("testPy: Hello from lib8\n");
+  obj.begin();
+}
+
+void readFlow(){
+  printf("readFlow()\n");
+  obj.readMotionCountGlob();
 }
 
 bool Bitcraze_PMW3901_begin()

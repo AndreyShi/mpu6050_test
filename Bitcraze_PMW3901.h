@@ -37,6 +37,7 @@ void Bitcraze_PMW3901_readMotionCount();
 int16_t Bitcraze_PMW3901_getX();
 int16_t Bitcraze_PMW3901_getY();
 void testPy();
+void readFlow();
 #ifdef __cplusplus
 }
 #endif
