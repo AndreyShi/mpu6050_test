@@ -5,6 +5,7 @@ from ctypes import *
 from threading import Thread
 import struct
 import dalnomer
+import math
 
 MPU = cdll.LoadLibrary('/home/pi/mpu-setup/libMPU6050.so')
 MPU.get_yarn.restype = c_float
@@ -37,11 +38,14 @@ def optic_flow():
  while 1:
   #  получение дельты от оптического потока
   DAL.Bitcraze_PMW3901_readMotionCount()
-  delX = DAL.Bitcraze_PMW3901_getX()
-  delY = DAL.Bitcraze_PMW3901_getY()
+  delX += abs(int(DAL.Bitcraze_PMW3901_getX()))
+  delY += abs(int(DAL.Bitcraze_PMW3901_getY()))
   print('dalnomer.distance:',dalnomer.distance,'delX:',delX,'delY:',delY)
-  # сконвертировать dalnomer.distance во float
-  # рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
+  dist_f = float(dalnomer.distance)# сконвертировать dalnomer.distance во float
+  #Если один из концов отрезка совпадает с началом координат, а другой имеет координаты М(хМ; уМ), то формула для вычисления d примет вид ОМ = √(хМ2 + уМ2).
+  #Источник: https://blog.tutoronline.ru/rasstojanie-mezhdu-dvumja-tochkami-na-ploskosti
+  dis_fl = math.sqrt(delX**2 + delY**2)
+       # рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
   sleep(1)#  пауза от 100 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
 th3 = Thread(target=optic_flow)
 th3.start()

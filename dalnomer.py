@@ -11,7 +11,7 @@ def poll():
     ser.write(str.encode('<MAcont>'))
     while 1:
         temp = ser.read(10) #1200.00m  
-        result = re.search("\d+.\d\dm",temp.decode('utf-8'))
+        result = re.search("\d+.\d\d",temp.decode('utf-8'))
         if result:
          distance = result.group(0)
          #print(distance)
