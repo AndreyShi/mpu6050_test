@@ -40,12 +40,21 @@ def optic_flow():
   DAL.Bitcraze_PMW3901_readMotionCount()
   delX += abs(int(DAL.Bitcraze_PMW3901_getX()))
   delY += abs(int(DAL.Bitcraze_PMW3901_getY()))
-  print('dalnomer.distance:',dalnomer.distance,'delX:',delX,'delY:',delY)
+  #print('dalnomer.distance:',dalnomer.distance,'delX:',delX,'delY:',delY)
   dist_f = float(dalnomer.distance)# сконвертировать dalnomer.distance во float
   #Если один из концов отрезка совпадает с началом координат, а другой имеет координаты М(хМ; уМ), то формула для вычисления d примет вид ОМ = √(хМ2 + уМ2).
   #Источник: https://blog.tutoronline.ru/rasstojanie-mezhdu-dvumja-tochkami-na-ploskosti
   dis_fl = math.sqrt(delX**2 + delY**2)
-       # рассчет расстояния в зависимости от dalnomer.distance и дельты отпического потока 
+  '''
+  высота H=10м
+  дельта к примеру D=50 юнитов (в чем у них там вывод)
+  соответствует реальной длине L=2м
+  соответственно коэффициент будет:
+  K=(2/50)/10 = 0.004 - это количество метров на 1 юнит дельты на высоте 1м
+  '''
+  K=(2/50)/dist_f
+  real_distance = dis_fl * K
+  print('real_distance:',real_distance)
   sleep(1)#  пауза от 100 мс (пока непонятны ограничения с какой частотой надо опрашивать датчик оптического потока)
 th3 = Thread(target=optic_flow)
 th3.start()
